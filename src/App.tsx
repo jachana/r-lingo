@@ -26,6 +26,7 @@ import {
 } from './data/lessons'
 import { ChoiceList } from './components/ChoiceList'
 import { FeedbackCard } from './components/FeedbackCard'
+import { MatchBoard } from './components/MatchBoard'
 import { TokenBank } from './components/TokenBank'
 import { WriteCard } from './components/WriteCard'
 import { checkTypedAnswer, type CheckResult } from './lib/checkAnswer'
@@ -236,6 +237,13 @@ function App() {
     setSelected('')
     setChecked(false)
     setCheckResult({ correct: false })
+  }
+
+  function finishMatch() {
+    setXp((currentXp) => currentXp + 20)
+    playFeedbackSound('unit')
+    setCelebration('unit')
+    advanceLesson()
   }
 
   function restart() {
@@ -515,20 +523,18 @@ function App() {
             </>
           ) : phase === 'match' ? (
             <>
-              <h2>Repaso de la unidad</h2>
-              <p className="context">Última prueba antes de cerrar {lesson.title}.</p>
-              <div className="feedback good">
-                <strong>Repaso de la unidad</strong>
-                <span>Disponible en la próxima tarea.</span>
-              </div>
+              <h2>Repaso: {lesson.title}</h2>
+              <p className="context">Última prueba antes de cerrar la unidad.</p>
+              <MatchBoard
+                key={lessonIndex}
+                onComplete={finishMatch}
+                pairs={seededShuffle(lesson.matchPairs, `match-${lessonIndex}`).slice(0, 4)}
+                seed={`match-${lessonIndex}`}
+              />
               <div className="actions">
                 <button className="secondary" onClick={restart} type="button">
                   <RotateCcw size={18} aria-hidden="true" />
                   Reiniciar
-                </button>
-                <button className="primary" onClick={advanceLesson} type="button">
-                  Continuar
-                  <ChevronRight size={18} aria-hidden="true" />
                 </button>
               </div>
             </>
