@@ -581,6 +581,92 @@ h1 {
   background: #f7fff9;
 }
 
+.token-bank {
+  display: grid;
+  gap: 12px;
+  margin-top: 28px;
+  padding: 16px;
+  border: 2px solid #dce7df;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 6px 0 #e0e9e4;
+}
+
+.token-bank.correct {
+  border-color: #2ca65f;
+  background: linear-gradient(135deg, #e8f8ed, #f8ffe9);
+  box-shadow: 0 8px 0 #9be15d;
+}
+
+.token-bank.wrong {
+  border-color: #d95b4f;
+  background: #fff0ee;
+  box-shadow: 0 6px 0 #ffc9c2;
+}
+
+.token-label {
+  color: #244134;
+  font-weight: 950;
+}
+
+.token-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  min-height: 64px;
+  padding: 12px;
+  border: 2px dashed #cfe3d7;
+  border-radius: 8px;
+  background: #f7fff9;
+}
+
+.token-placeholder {
+  color: #6b7f71;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.token-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.token-chip {
+  padding: 10px 14px;
+  border: 2px solid #dce7df;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 5px 0 #e0e9e4;
+  cursor: pointer;
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease,
+    border-color 150ms ease,
+    opacity 150ms ease;
+}
+
+.token-chip:hover:not(:disabled) {
+  border-color: #278f52;
+  transform: translateY(-2px);
+  box-shadow: 0 7px 0 #c3ead1;
+}
+
+.token-chip:active:not(:disabled) {
+  box-shadow: 0 1px 0 #c3ead1;
+  transform: translateY(3px);
+}
+
+.token-chip.used {
+  opacity: 0.35;
+}
+
+.token-chip.placed {
+  border-color: #278f52;
+  background: #f0fbf4;
+}
+
 code {
   color: #18211d;
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;

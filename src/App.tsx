@@ -26,6 +26,7 @@ import {
 } from './data/lessons'
 import { ChoiceList } from './components/ChoiceList'
 import { FeedbackCard } from './components/FeedbackCard'
+import { TokenBank } from './components/TokenBank'
 import { WriteCard } from './components/WriteCard'
 import { checkTypedAnswer, type CheckResult } from './lib/checkAnswer'
 import { pickMode, type ChallengeMode } from './lib/pickMode'
@@ -153,7 +154,6 @@ function App() {
   const challengeKey = getChallengeKey(lessonIndex, challengeIndex)
   const isAlreadyCompleted = completedCorrect.includes(challengeKey)
   const challengeMode = pickMode(challenge, `${challengeKey}-a0`)
-  const effectiveMode = challengeMode === 'tokens' ? 'write' : challengeMode
   const shuffledChoices = useMemo(
     () => seededShuffle(challenge.choices, `${challengeKey}-${challenge.answer}`),
     [challenge.choices, challenge.answer, challengeKey],
@@ -182,9 +182,9 @@ function App() {
   function checkAnswer() {
     if (!selected.trim()) return
     const result =
-      effectiveMode === 'choice'
+      challengeMode === 'choice'
         ? { correct: selected === challenge.answer }
-        : checkTypedAnswer(selected, getExpectedAnswers(challenge, effectiveMode))
+        : checkTypedAnswer(selected, getExpectedAnswers(challenge, challengeMode))
     setCheckResult(result)
     setChecked(true)
     if (result.correct) {
@@ -437,7 +437,7 @@ function App() {
                 </pre>
               )}
 
-              {effectiveMode === 'choice' ? (
+              {challengeMode === 'choice' ? (
                 <ChoiceList
                   answer={challenge.answer}
                   checked={checked || isAlreadyCompleted}
@@ -446,6 +446,17 @@ function App() {
                   onSelect={setSelected}
                   selected={selected}
                 />
+              ) : challengeMode === 'tokens' && challenge.tokens ? (
+                <TokenBank
+                  checked={checked || isAlreadyCompleted}
+                  correct={isCorrect || isAlreadyCompleted}
+                  disabled={checked || isAlreadyCompleted}
+                  distractors={challenge.tokens.distractors}
+                  key={challengeKey}
+                  onChange={setSelected}
+                  parts={challenge.tokens.parts}
+                  seed={challengeKey}
+                />
               ) : (
                 <WriteCard
                   checked={checked || isAlreadyCompleted}
@@ -453,9 +464,9 @@ function App() {
                   disabled={checked || isAlreadyCompleted}
                   gapTemplate={challenge.gap?.template}
                   hint={checkResult.hint}
-                  mode={effectiveMode}
+                  mode={challengeMode === 'gap' ? 'gap' : 'write'}
                   onChange={setSelected}
-                  revealedAnswer={checked && !isCorrect ? (effectiveMode === 'gap' ? challenge.gap?.blank : challenge.answer) : undefined}
+                  revealedAnswer={checked && !isCorrect ? (challengeMode === 'gap' ? challenge.gap?.blank : challenge.answer) : undefined}
                   value={selected}
                 />
               )}
@@ -467,7 +478,7 @@ function App() {
                   explain={isAlreadyCompleted && !checked ? 'Esta ya quedó respondida. Puedes continuar con la próxima.' : challenge.explain}
                   hint={checkResult.hint}
                   onReviewConcept={() => setShowTheory(true)}
-                  revealedAnswer={checked && !isCorrect ? (effectiveMode === 'gap' ? challenge.gap?.blank : challenge.answer) : undefined}
+                  revealedAnswer={checked && !isCorrect ? (challengeMode === 'gap' ? challenge.gap?.blank : challenge.answer) : undefined}
                 />
               )}
 
