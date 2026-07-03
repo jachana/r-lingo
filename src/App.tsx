@@ -9,6 +9,7 @@ import {
   Flame,
   FlaskConical,
   Heart,
+  Lock,
   Medal,
   Play,
   RotateCcw,
@@ -77,13 +78,81 @@ type StoredProgress = {
   hearts: number
   streak: number
   completedCorrect: string[]
+  completedLessons: number[]
   xp: number
 }
 
 const progressStorageKey = 'r-lingo-progress-v2'
 
+function getTheoryPages(lesson: (typeof lessons)[number], support: (typeof lessonSupport)[string]) {
+  return [
+    {
+      eyebrow: 'Qué es',
+      title: lesson.title,
+      body:
+        `${lesson.theory.why} En simple: esta unidad te enseña una herramienta pequeña de R para que una pregunta de salud pública quede escrita como pasos claros, no como memoria o intuición.`,
+      bullets: support.keyIdeas.slice(0, 2),
+    },
+    {
+      eyebrow: 'Cuándo y por qué',
+      title: 'Cuándo usarlo',
+      body:
+        'Úsalo cuando quieras que otra persona pueda revisar tu análisis, repetirlo o entender por qué tomaste una decisión. En investigación, eso importa tanto como llegar al número final.',
+      bullets: lesson.theory.canDo,
+    },
+    {
+      eyebrow: 'Dónde aparece',
+      title: 'Dónde lo verás en datos reales',
+      body:
+        'Aparece en bases de vigilancia, encuestas, laboratorios, reportes comunales y tableros. Normalmente lo usarás al preparar datos antes de calcular tasas, filtrar casos o crear gráficos.',
+      bullets: support.tips.slice(0, 3),
+    },
+    {
+      eyebrow: 'Cómo se usa',
+      title: 'Cómo se ve en R',
+      body:
+        'No necesitas memorizar todo. Mira el patrón general: nombre de objeto, función, paréntesis, argumentos y comentarios. La práctica después te pide reconocer o completar estas piezas.',
+      code: support.script,
+    },
+    {
+      eyebrow: 'Ejemplo',
+      title: 'Ejemplo en salud pública',
+      body: lesson.theory.example,
+      bullets: support.keyIdeas.slice(2),
+    },
+    {
+      eyebrow: 'Antes de practicar',
+      title: 'Lo mínimo para responder',
+      body:
+        'Las preguntas salen de estas ideas. Si algo parece aparecer de la nada, vuelve a esta página y busca la palabra clave: función, objeto, filtro, fecha, porcentaje o gráfico.',
+      bullets: [...support.keyIdeas.slice(0, 4), ...support.tips.slice(0, 2)],
+    },
+  ]
+}
+
 function getFreshProgress(): StoredProgress {
-  return { lessonIndex: 0, challengeIndex: 0, hearts: 5, streak: 0, completedCorrect: [], xp: 0 }
+  return { lessonIndex: 0, challengeIndex: 0, hearts: 5, streak: 0, completedCorrect: [], completedLessons: [], xp: 0 }
+}
+
+function getCompletedLessonsFromAnswers(completedCorrect: string[]) {
+  return lessons.reduce<number[]>((completed, lesson, lessonIndex) => {
+    const lessonDone = getLessonChallenges(lesson).every((_, challengeIndex) =>
+      completedCorrect.includes(getChallengeKey(lessonIndex, challengeIndex)),
+    )
+    return lessonDone ? [...completed, lessonIndex] : completed
+  }, [])
+}
+
+function getUnlockedLessonIndex(completedLessons: number[]) {
+  const completedSet = new Set(completedLessons)
+  const firstLocked = lessons.findIndex((_, index) => !completedSet.has(index))
+  return firstLocked === -1 ? lessons.length - 1 : firstLocked
+}
+
+function getInitialPhase(lessonIndex: number, completedCorrect: string[], completedLessons: number[]): 'practice' | 'match' | 'done' {
+  const queue = buildQueue(lessonIndex, getLessonChallenges(lessons[lessonIndex]).length, completedCorrect)
+  if (queue.length > 0) return 'practice'
+  return completedLessons.includes(lessonIndex) ? 'done' : 'match'
 }
 
 function readStoredProgress(): StoredProgress {
@@ -94,7 +163,16 @@ function readStoredProgress(): StoredProgress {
     if (!stored) return getFreshProgress()
 
     const parsed = JSON.parse(stored) as Partial<StoredProgress>
-    const safeLessonIndex = Math.min(Math.max(parsed.lessonIndex ?? 0, 0), lessons.length - 1)
+    const storedLessonIndex = Math.min(Math.max(parsed.lessonIndex ?? 0, 0), lessons.length - 1)
+    const storedCompletedLessons = Array.isArray(parsed.completedLessons) ? parsed.completedLessons : undefined
+    const completedLessons = [
+      ...new Set(
+        (storedCompletedLessons ?? getCompletedLessonsFromAnswers(Array.isArray(parsed.completedCorrect) ? parsed.completedCorrect : [])).filter(
+          (index) => Number.isInteger(index) && index >= 0 && index < lessons.length,
+        ),
+      ),
+    ]
+    const safeLessonIndex = Math.min(storedLessonIndex, getUnlockedLessonIndex(completedLessons))
     const safeLesson = lessons[safeLessonIndex]
     const completedCorrect = Array.isArray(parsed.completedCorrect) ? parsed.completedCorrect : []
     const safeChallengeIndex = Math.min(Math.max(parsed.challengeIndex ?? 0, 0), getLessonChallenges(safeLesson).length - 1)
@@ -109,6 +187,7 @@ function readStoredProgress(): StoredProgress {
       hearts: Math.min(Math.max(parsed.hearts ?? 5, 0), 5),
       streak: Math.max(parsed.streak ?? 0, 0),
       completedCorrect,
+      completedLessons,
       xp: Math.max(parsed.xp ?? completedCorrect.length * 20, 0),
     }
   } catch {
@@ -127,27 +206,26 @@ function App() {
     ),
   )
   const [phase, setPhase] = useState<'practice' | 'match' | 'done'>(() =>
-    buildQueue(
-      initialProgress.lessonIndex,
-      getLessonChallenges(lessons[initialProgress.lessonIndex]).length,
-      initialProgress.completedCorrect,
-    ).length === 0
-      ? 'done'
-      : 'practice',
+    getInitialPhase(initialProgress.lessonIndex, initialProgress.completedCorrect, initialProgress.completedLessons),
   )
   const [selected, setSelected] = useState('')
   const [checked, setChecked] = useState(false)
   const [checkResult, setCheckResult] = useState<CheckResult>({ correct: false })
   const [completedCorrect, setCompletedCorrect] = useState(initialProgress.completedCorrect)
+  const [completedLessons, setCompletedLessons] = useState(initialProgress.completedLessons)
   const [hearts, setHearts] = useState(initialProgress.hearts)
   const [streak, setStreak] = useState(initialProgress.streak)
   const [xp, setXp] = useState(initialProgress.xp)
   const [celebration, setCelebration] = useState<'correct' | 'level' | 'unit' | null>(null)
   const [showTheory, setShowTheory] = useState(true)
+  const [theoryPageIndex, setTheoryPageIndex] = useState(0)
 
   const lesson = lessons[lessonIndex]
   const lessonChallenges = getLessonChallenges(lesson)
   const support = lessonSupport[lesson.title]
+  const theoryPages = getTheoryPages(lesson, support)
+  const theoryPage = theoryPages[theoryPageIndex] ?? theoryPages[0]
+  const theoryProgress = ((theoryPageIndex + 1) / theoryPages.length) * 100
   const currentItem = queue[0]
   const challengeIndex = currentItem?.challengeIndex ?? 0
   const challenge = lessonChallenges[challengeIndex]
@@ -165,15 +243,16 @@ function App() {
   const progress = (completedCorrect.length / totalChallenges) * 100
   const level = Math.floor(xp / 100) + 1
   const levelProgress = xp % 100
+  const unlockedLessonIndex = getUnlockedLessonIndex(completedLessons)
 
   const lessonScore = useMemo(() => {
     return Math.round((completedCorrect.length / totalChallenges) * 100)
   }, [completedCorrect.length, totalChallenges])
 
   useEffect(() => {
-    const progressToStore: StoredProgress = { lessonIndex, challengeIndex: queue[0]?.challengeIndex ?? 0, hearts, streak, completedCorrect, xp }
+    const progressToStore: StoredProgress = { lessonIndex, challengeIndex: queue[0]?.challengeIndex ?? 0, hearts, streak, completedCorrect, completedLessons, xp }
     window.localStorage.setItem(progressStorageKey, JSON.stringify(progressToStore))
-  }, [lessonIndex, queue, hearts, streak, completedCorrect, xp])
+  }, [lessonIndex, queue, hearts, streak, completedCorrect, completedLessons, xp])
 
   useEffect(() => {
     if (!celebration) return
@@ -231,6 +310,7 @@ function App() {
       setQueue(nextQueue)
       setPhase(nextQueue.length === 0 ? 'done' : 'practice')
       setShowTheory(true)
+      setTheoryPageIndex(0)
     } else {
       setPhase('done')
     }
@@ -240,6 +320,7 @@ function App() {
   }
 
   function finishMatch() {
+    setCompletedLessons((completed) => (completed.includes(lessonIndex) ? completed : [...completed, lessonIndex]))
     setXp((currentXp) => currentXp + 20)
     playFeedbackSound('unit')
     setCelebration('unit')
@@ -254,11 +335,13 @@ function App() {
     setChecked(false)
     setCheckResult({ correct: false })
     setCompletedCorrect([])
+    setCompletedLessons([])
     setHearts(5)
     setStreak(0)
     setXp(0)
     setCelebration(null)
     setShowTheory(true)
+    setTheoryPageIndex(0)
   }
 
   return (
@@ -329,29 +412,34 @@ function App() {
           {lessons.map((item, index) => {
             const Icon = iconMap[item.icon]
             const active = index === lessonIndex
-            const complete = index < lessonIndex
+            const complete = completedLessons.includes(index)
+            const locked = index > unlockedLessonIndex
             return (
               <button
-                className={`lesson-node ${active ? 'active' : ''} ${complete ? 'complete' : ''}`}
+                aria-label={locked ? `${item.title}, bloqueada` : item.title}
+                className={`lesson-node ${active ? 'active' : ''} ${complete ? 'complete' : ''} ${locked ? 'locked' : ''}`}
+                disabled={locked}
                 key={item.title}
                 onClick={() => {
+                  if (locked) return
                   const nextQueue = buildQueue(index, getLessonChallenges(lessons[index]).length, completedCorrect)
                   setLessonIndex(index)
                   setQueue(nextQueue)
-                  setPhase(nextQueue.length === 0 ? 'done' : 'practice')
+                  setPhase(getInitialPhase(index, completedCorrect, completedLessons))
                   setSelected('')
                   setChecked(false)
                   setCheckResult({ correct: false })
                   setShowTheory(true)
+                  setTheoryPageIndex(0)
                 }}
                 type="button"
               >
                 <span className="lesson-icon">
-                  {complete ? <Check size={20} aria-hidden="true" /> : <Icon size={20} aria-hidden="true" />}
+                  {locked ? <Lock size={20} aria-hidden="true" /> : complete ? <Check size={20} aria-hidden="true" /> : <Icon size={20} aria-hidden="true" />}
                 </span>
                 <span>
                   <strong>{item.title}</strong>
-                  <small>{item.goal}</small>
+                  <small>{locked ? 'Completa la unidad anterior para desbloquear' : item.goal}</small>
                 </span>
               </button>
             )
@@ -372,52 +460,36 @@ function App() {
               <div className="theory-icon">
                 <BookOpen size={28} aria-hidden="true" />
               </div>
-              <p className="eyebrow mini">Unidad</p>
-              <h2>{lesson.title}</h2>
-              <p className="context">{lesson.theory.why}</p>
-              <h3>Qué puedes hacer con esto</h3>
-              <ul>
-                {lesson.theory.canDo.map((item) => (
-                  <li key={item}>
-                    <Check size={18} aria-hidden="true" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="public-health-example">
-                <strong>Ejemplo en salud pública</strong>
-                <span>{lesson.theory.example}</span>
+              <div className="theory-progress-header">
+                <div>
+                  <p className="eyebrow mini">{theoryPage.eyebrow}</p>
+                  <h2>{theoryPage.title}</h2>
+                </div>
+                <span>
+                  {theoryPageIndex + 1} de {theoryPages.length}
+                </span>
               </div>
-              <div className="lesson-support">
-                <section>
-                  <h3>Ideas clave para responder</h3>
-                  <ul>
-                    {support.keyIdeas.map((idea) => (
-                      <li key={idea}>
-                        <Check size={18} aria-hidden="true" />
-                        <span>{idea}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-                <section>
-                  <h3>Mini-script de ejemplo</h3>
+              <div className="theory-page-track" aria-label="Progreso de lectura de la unidad">
+                <div style={{ width: `${theoryProgress}%` }} />
+              </div>
+              <p className="context theory-body">{theoryPage.body}</p>
+              {theoryPage.bullets && (
+                <ul>
+                  {theoryPage.bullets.map((item) => (
+                    <li key={item}>
+                      <Check size={18} aria-hidden="true" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {theoryPage.code && (
+                <div className="lesson-support single">
                   <pre>
-                    <code>{support.script}</code>
+                    <code>{theoryPage.code}</code>
                   </pre>
-                </section>
-                <section>
-                  <h3>Tips antes de practicar</h3>
-                  <ul>
-                    {support.tips.map((tip) => (
-                      <li key={tip}>
-                        <Sparkles size={18} aria-hidden="true" />
-                        <span>{tip}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              </div>
+                </div>
+              )}
               <div className="documentation-links" aria-label={`Documentación de ${lesson.title}`}>
                 <strong>Documentación dentro de la app</strong>
                 <div>
@@ -438,10 +510,22 @@ function App() {
                   <RotateCcw size={18} aria-hidden="true" />
                   Reiniciar
                 </button>
-                <button className="primary" onClick={() => setShowTheory(false)} type="button">
-                  Empezar práctica
-                  <ChevronRight size={18} aria-hidden="true" />
-                </button>
+                <div className="theory-nav">
+                  <button className="secondary" disabled={theoryPageIndex === 0} onClick={() => setTheoryPageIndex((page) => Math.max(0, page - 1))} type="button">
+                    Atrás
+                  </button>
+                  {theoryPageIndex < theoryPages.length - 1 ? (
+                    <button className="primary" onClick={() => setTheoryPageIndex((page) => Math.min(theoryPages.length - 1, page + 1))} type="button">
+                      Siguiente
+                      <ChevronRight size={18} aria-hidden="true" />
+                    </button>
+                  ) : (
+                    <button className="primary" onClick={() => setShowTheory(false)} type="button">
+                      Empezar práctica
+                      <ChevronRight size={18} aria-hidden="true" />
+                    </button>
+                  )}
+                </div>
               </div>
             </article>
           ) : phase === 'practice' && currentItem ? (
