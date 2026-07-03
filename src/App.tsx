@@ -24,8 +24,12 @@ import {
   lessons,
   lessonSupport,
 } from './data/lessons'
-
-type ChallengeMode = 'choice' | 'write' | 'gap'
+import { ChoiceList } from './components/ChoiceList'
+import { FeedbackCard } from './components/FeedbackCard'
+import { WriteCard } from './components/WriteCard'
+import { checkTypedAnswer, type CheckResult } from './lib/checkAnswer'
+import { pickMode, type ChallengeMode } from './lib/pickMode'
+import { seededShuffle } from './lib/shuffle'
 
 const iconMap = {
   play: Play,
@@ -33,43 +37,9 @@ const iconMap = {
   chart: BarChart3,
 }
 
-function isCodeAnswer(answer: string) {
-  return /[<>=()*/]| <- |%in%|^#/.test(answer)
-}
-
-function getChallengeMode(challenge: Challenge, challengePosition: number): ChallengeMode {
-  if (!isCodeAnswer(challenge.answer)) return 'choice'
-  if (challengePosition % 5 === 0) return 'write'
-  if (challengePosition % 5 === 3) return 'gap'
-  return 'choice'
-}
-
-function getGapTemplate(answer: string) {
-  if (answer.includes('<-')) return answer.replace(/<-\s*.+$/, '<- ____')
-  if (answer.includes('(')) return answer.replace(/\((.*)\)/, '(____)')
-  if (answer.includes('==')) return answer.replace(/==\s*.+$/, '== ____')
-  if (answer.includes('>=')) return answer.replace(/>=\s*.+$/, '>= ____')
-  if (answer.includes('/')) return answer.replace(/\/.+$/, '/ ____')
-  return '____'
-}
-
-function normalizeAnswer(value: string) {
-  return value.trim().replace(/\s+/g, ' ').toLowerCase()
-}
-
-function shuffleChoices(choices: string[], seed: string) {
-  let hash = 0
-  for (const character of seed) {
-    hash = (hash * 31 + character.charCodeAt(0)) >>> 0
-  }
-
-  return [...choices]
-    .map((choice) => {
-      hash = (hash * 1664525 + 1013904223) >>> 0
-      return { choice, order: hash }
-    })
-    .sort((left, right) => left.order - right.order)
-    .map(({ choice }) => choice)
+function getExpectedAnswers(target: Challenge, mode: ChallengeMode): string[] {
+  if (mode === 'gap' && target.gap) return [target.gap.blank, ...(target.gap.acceptedBlanks ?? [])]
+  return [target.answer, ...(target.acceptedAnswers ?? [])]
 }
 
 function playFeedbackSound(kind: 'correct' | 'wrong' | 'unit') {
@@ -166,6 +136,7 @@ function App() {
   const [challengeIndex, setChallengeIndex] = useState(initialProgress.challengeIndex)
   const [selected, setSelected] = useState('')
   const [checked, setChecked] = useState(false)
+  const [checkResult, setCheckResult] = useState<CheckResult>({ correct: false })
   const [completedCorrect, setCompletedCorrect] = useState(initialProgress.completedCorrect)
   const [hearts, setHearts] = useState(initialProgress.hearts)
   const [streak, setStreak] = useState(initialProgress.streak)
@@ -181,9 +152,13 @@ function App() {
   const isLastChallengeInUnit = challengeIndex === lessonChallenges.length - 1
   const challengeKey = getChallengeKey(lessonIndex, challengeIndex)
   const isAlreadyCompleted = completedCorrect.includes(challengeKey)
-  const challengeMode = getChallengeMode(challenge, challengeIndex)
-  const shuffledChoices = useMemo(() => shuffleChoices(challenge.choices, `${challengeKey}-${challenge.answer}`), [challenge.choices, challenge.answer, challengeKey])
-  const isCorrect = normalizeAnswer(selected) === normalizeAnswer(challenge.answer)
+  const challengeMode = pickMode(challenge, `${challengeKey}-a0`)
+  const effectiveMode = challengeMode === 'tokens' ? 'write' : challengeMode
+  const shuffledChoices = useMemo(
+    () => seededShuffle(challenge.choices, `${challengeKey}-${challenge.answer}`),
+    [challenge.choices, challenge.answer, challengeKey],
+  )
+  const isCorrect = checkResult.correct
   const totalChallenges = lessons.reduce((sum, item) => sum + getLessonChallenges(item).length, 0)
   const progress = (completedCorrect.length / totalChallenges) * 100
   const level = Math.floor(xp / 100) + 1
@@ -206,8 +181,13 @@ function App() {
 
   function checkAnswer() {
     if (!selected.trim()) return
+    const result =
+      effectiveMode === 'choice'
+        ? { correct: selected === challenge.answer }
+        : checkTypedAnswer(selected, getExpectedAnswers(challenge, effectiveMode))
+    setCheckResult(result)
     setChecked(true)
-    if (isCorrect) {
+    if (result.correct) {
       const isNewCompletion = !completedCorrect.includes(challengeKey)
       setCompletedCorrect((completed) => {
         if (completed.includes(challengeKey)) return completed
@@ -245,6 +225,7 @@ function App() {
 
     setSelected('')
     setChecked(false)
+    setCheckResult({ correct: false })
   }
 
   function restart() {
@@ -252,6 +233,7 @@ function App() {
     setChallengeIndex(0)
     setSelected('')
     setChecked(false)
+    setCheckResult({ correct: false })
     setCompletedCorrect([])
     setHearts(5)
     setStreak(0)
@@ -338,6 +320,7 @@ function App() {
                   setChallengeIndex(getFirstIncompleteChallengeIndex(index, completedCorrect))
                   setSelected('')
                   setChecked(false)
+                  setCheckResult({ correct: false })
                   setShowTheory(true)
                 }}
                 type="button"
@@ -448,80 +431,44 @@ function App() {
               <h2>{challenge.prompt}</h2>
               <p className="context">{challenge.context}</p>
 
-              {challengeMode === 'choice' ? (
-                <div className="choice-list">
-                  {shuffledChoices.map((choice) => {
-                    const chosen = selected === choice
-                    const revealCorrect = (checked || isAlreadyCompleted) && normalizeAnswer(choice) === normalizeAnswer(challenge.answer)
-                    const revealWrong = checked && chosen && normalizeAnswer(choice) !== normalizeAnswer(challenge.answer)
-                    return (
-                      <button
-                        className={`choice ${chosen ? 'chosen' : ''} ${revealCorrect ? 'correct' : ''} ${
-                          revealWrong ? 'wrong' : ''
-                        }`}
-                        disabled={checked || isAlreadyCompleted}
-                        key={choice}
-                        onClick={() => setSelected(choice)}
-                        type="button"
-                      >
-                        <code>{choice}</code>
-                      </button>
-                    )
-                  })}
-                </div>
+              {challenge.code && (
+                <pre className="challenge-code">
+                  <code>{challenge.code}</code>
+                </pre>
+              )}
+
+              {effectiveMode === 'choice' ? (
+                <ChoiceList
+                  answer={challenge.answer}
+                  checked={checked || isAlreadyCompleted}
+                  choices={shuffledChoices}
+                  disabled={checked || isAlreadyCompleted}
+                  onSelect={setSelected}
+                  selected={selected}
+                />
               ) : (
-                <div className={`write-card ${checked || isAlreadyCompleted ? (isCorrect || isAlreadyCompleted ? 'correct' : 'wrong') : ''}`}>
-                  <label htmlFor="written-answer">
-                    {challengeMode === 'gap' ? 'Rellena el espacio' : 'Escribe la respuesta'}
-                  </label>
-                  {challengeMode === 'gap' && (
-                    <div className="gap-line" aria-hidden="true">
-                      <code>{getGapTemplate(challenge.answer)}</code>
-                    </div>
-                  )}
-                  <input
-                    autoComplete="off"
-                    disabled={checked || isAlreadyCompleted}
-                    id="written-answer"
-                    onChange={(event) => setSelected(event.target.value)}
-                    onInput={(event) => setSelected(event.currentTarget.value)}
-                    placeholder={challengeMode === 'gap' ? 'Completa aquí' : 'Escribe tu respuesta aquí'}
-                    type="text"
-                    value={selected}
-                  />
-                  {!checked && !isAlreadyCompleted && (
-                    <small>
-                      Tip: respeta nombres, signos y paréntesis. La respuesta está explicada en la unidad.
-                    </small>
-                  )}
-                  {checked && !isCorrect && (
-                    <small>
-                      Respuesta esperada: <code>{challenge.answer}</code>
-                    </small>
-                  )}
-                  {isAlreadyCompleted && !checked && (
-                    <small>
-                      Ya respondida. Respuesta: <code>{challenge.answer}</code>
-                    </small>
-                  )}
-                </div>
+                <WriteCard
+                  checked={checked || isAlreadyCompleted}
+                  correct={isCorrect || isAlreadyCompleted}
+                  disabled={checked || isAlreadyCompleted}
+                  gapTemplate={challenge.gap?.template}
+                  hint={checkResult.hint}
+                  mode={effectiveMode}
+                  onChange={setSelected}
+                  revealedAnswer={checked && !isCorrect ? (effectiveMode === 'gap' ? challenge.gap?.blank : challenge.answer) : undefined}
+                  value={selected}
+                />
               )}
 
               {(checked || isAlreadyCompleted) && (
-                <div className={`feedback ${isCorrect || isAlreadyCompleted ? 'good' : 'try-again'}`}>
-                  <strong>
-                    {isAlreadyCompleted && !checked
-                      ? 'Esta ya quedó respondida.'
-                      : isCorrect
-                        ? 'Bien ahí. Tu racha de análisis sigue viva.'
-                        : 'Casi, pero no es esta.'}
-                  </strong>
-                  <span>{challenge.explain}</span>
-                  <button className="concept-link" onClick={() => setShowTheory(true)} type="button">
-                    <BookOpen size={16} aria-hidden="true" />
-                    Repasar {challenge.concept} en esta unidad
-                  </button>
-                </div>
+                <FeedbackCard
+                  concept={challenge.concept}
+                  correct={isCorrect || isAlreadyCompleted}
+                  explain={isAlreadyCompleted && !checked ? 'Esta ya quedó respondida. Puedes continuar con la próxima.' : challenge.explain}
+                  hint={checkResult.hint}
+                  onReviewConcept={() => setShowTheory(true)}
+                  revealedAnswer={checked && !isCorrect ? (effectiveMode === 'gap' ? challenge.gap?.blank : challenge.answer) : undefined}
+                />
               )}
 
               <div className="actions">
