@@ -353,6 +353,39 @@ h1 {
   color: #1f3b26;
 }
 
+.lesson-support {
+  display: grid;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.lesson-support section {
+  display: grid;
+  gap: 10px;
+}
+
+.lesson-support h3 {
+  margin: 0;
+}
+
+.lesson-support pre {
+  overflow-x: auto;
+  margin: 0;
+  padding: 14px;
+  border: 2px solid #dce8df;
+  border-radius: 8px;
+  background: #102414;
+  color: #f3ffe9;
+  box-shadow: 0 6px 0 #d7e5dc;
+}
+
+.lesson-support pre code {
+  color: inherit;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  white-space: pre;
+}
+
 .documentation-links {
   display: grid;
   gap: 10px;
@@ -364,12 +397,26 @@ h1 {
 }
 
 .documentation-links div {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  display: grid;
+  gap: 12px;
 }
 
-.documentation-links a,
+.doc-note {
+  display: grid;
+  gap: 7px;
+  padding: 13px;
+  border: 2px solid #dce8df;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 5px 0 #e2ece6;
+}
+
+.doc-note > span {
+  color: #405548;
+  line-height: 1.35;
+}
+
+.doc-note a,
 .concept-link,
 .reference-panel a {
   display: inline-flex;
@@ -380,16 +427,18 @@ h1 {
   text-decoration: none;
 }
 
-.documentation-links a {
+.doc-note a {
+  width: fit-content;
   min-height: 40px;
   padding: 0 12px;
   border: 2px solid #cfe8d8;
   border-radius: 999px;
   background: #ffffff;
   box-shadow: 0 4px 0 #e1eee5;
+  font-size: 0.88rem;
 }
 
-.documentation-links a:hover,
+.doc-note a:hover,
 .reference-panel a:hover {
   color: #7052d7;
 }
@@ -458,6 +507,63 @@ h1 {
   border-color: #d95b4f;
   background: #fff0ee;
   box-shadow: 0 6px 0 #ffc9c2;
+}
+
+.write-card {
+  display: grid;
+  gap: 12px;
+  margin-top: 28px;
+  padding: 16px;
+  border: 2px solid #dce7df;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 6px 0 #e0e9e4;
+}
+
+.write-card label {
+  color: #244134;
+  font-weight: 950;
+}
+
+.write-card input {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 14px;
+  border: 2px solid #cfe3d7;
+  border-radius: 8px;
+  color: #18211d;
+  background: #fafffb;
+  font: 900 1rem 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+}
+
+.write-card input:focus {
+  border-color: #2ca65f;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(44, 166, 95, 0.14);
+}
+
+.write-card.correct {
+  border-color: #2ca65f;
+  background: linear-gradient(135deg, #e8f8ed, #f8ffe9);
+  box-shadow: 0 8px 0 #9be15d;
+}
+
+.write-card.wrong {
+  border-color: #d95b4f;
+  background: #fff0ee;
+  box-shadow: 0 6px 0 #ffc9c2;
+}
+
+.write-card small {
+  color: #68420a;
+  font-weight: 800;
+}
+
+.gap-line {
+  padding: 10px 12px;
+  border: 2px dashed #cfe3d7;
+  border-radius: 8px;
+  background: #f7fff9;
 }
 
 code {
@@ -651,6 +757,14 @@ button {
   color: #ffffff;
 }
 
+.celebration.unit .celebration-card {
+  min-width: min(460px, calc(100vw - 42px));
+  padding: 38px 30px;
+  background: linear-gradient(135deg, #2ca65f, #40c8ff 48%, #ffd24d);
+  color: #102414;
+  animation-duration: 920ms;
+}
+
 .celebration-card strong {
   font-size: clamp(2.4rem, 8vw, 4.7rem);
   line-height: 0.9;
@@ -763,13 +877,79 @@ button {
   }
 }
 
+@media (max-width: 1180px) and (min-width: 761px) {
+  .topbar,
+  .progress-track,
+  .reward-strip,
+  .learning-grid {
+    max-width: 920px;
+  }
+
+  .learning-grid {
+    grid-template-columns: minmax(240px, 0.75fr) minmax(420px, 1.25fr);
+  }
+
+  .lesson-path {
+    grid-template-columns: 1fr;
+  }
+
+  .reference-panel {
+    grid-column: 1 / -1;
+  }
+
+  .reference-panel ul {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    padding: 14px;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 11vw, 3.1rem);
+  }
+
+  .stats {
+    gap: 8px;
+  }
+
+  .reward-strip {
+    gap: 10px;
+  }
+
+  .lesson-path {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 12px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .lesson-node {
+    flex: 0 0 min(280px, 82vw);
+    scroll-snap-align: start;
+  }
+
+  .challenge-panel,
+  .reference-panel {
+    padding: 16px;
+  }
+
+  .documentation-links div {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 640px) {
   .app-shell {
     padding: 12px;
   }
 
   .lesson-path {
-    grid-template-columns: 1fr;
+    display: flex;
   }
 
   .lesson-meta,
