@@ -3,19 +3,19 @@ export type CheckResult = { correct: boolean; hint?: string }
 // Multi-char operators are protected with placeholder chars so the
 // single-char pass can't split them (e.g. `<-` must not become `< -`).
 const operatorPlaceholders: [string, string][] = [
-  ['%in%', ''],
-  ['<-', ''],
-  ['->', ''],
-  ['==', ''],
-  ['>=', ''],
-  ['<=', ''],
-  ['!=', ''],
+  ['%in%', '\u0001'],
+  ['<-', '\u0002'],
+  ['->', '\u0003'],
+  ['==', '\u0004'],
+  ['>=', '\u0005'],
+  ['<=', '\u0006'],
+  ['!=', '\u0007'],
 ]
 
 export function normalizeCode(value: string): string {
   let out = value.trim().replace(/'/g, '"')
   for (const [op, placeholder] of operatorPlaceholders) out = out.split(op).join(placeholder)
-  out = out.replace(/([-=+\-*/&|<>,()])/g, ' $1 ')
+  out = out.replace(/([\u0001-\u0007=+\-*/&|<>,()])/g, ' $1 ')
   for (const [op, placeholder] of operatorPlaceholders) out = out.split(placeholder).join(op)
   return out
     .replace(/\s+/g, ' ')
