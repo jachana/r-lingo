@@ -19,6 +19,15 @@ describe('normalizeCode', () => {
   it('does NOT fold case', () => {
     expect(normalizeCode('TRUE')).not.toBe(normalizeCode('true'))
   })
+
+  it('normalizes spacing outside quotes but preserves text inside quotes', () => {
+    expect(normalizeCode('ymd( "2026-07-02" )')).toBe(normalizeCode('ymd("2026-07-02")'))
+    expect(normalizeCode('filter(rango=="20-29")')).toBe(normalizeCode('filter(rango == "20-29")'))
+  })
+
+  it('does not equate different string literals', () => {
+    expect(normalizeCode('ymd("2026 - 07 - 02")')).not.toBe(normalizeCode('ymd("2026-07-02")'))
+  })
 })
 
 describe('checkTypedAnswer', () => {

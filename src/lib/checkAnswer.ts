@@ -14,15 +14,22 @@ const operatorPlaceholders: [string, string][] = [
 
 export function normalizeCode(value: string): string {
   let out = value.trim().replace(/'/g, '"')
+  const stringLiterals: string[] = []
+  out = out.replace(/"([^"\\]|\\.)*"/g, (literal) => {
+    const placeholder = `\u0008${stringLiterals.length}\u0008`
+    stringLiterals.push(literal)
+    return placeholder
+  })
   for (const [op, placeholder] of operatorPlaceholders) out = out.split(op).join(placeholder)
   out = out.replace(/([\u0001-\u0007=+\-*/&|<>,()])/g, ' $1 ')
   for (const [op, placeholder] of operatorPlaceholders) out = out.split(placeholder).join(op)
-  return out
+  out = out
     .replace(/\s+/g, ' ')
     .replace(/\( /g, '(')
     .replace(/ \)/g, ')')
     .replace(/ ,/g, ',')
     .trim()
+  return out.replace(/\u0008(\d+)\u0008/g, (_, index: string) => stringLiterals[Number(index)])
 }
 
 function findCaseMismatch(input: string, candidate: string): { want: string; got: string } | undefined {
