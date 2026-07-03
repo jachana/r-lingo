@@ -53,4 +53,21 @@ describe('content integrity', () => {
       expect(normalizeCode(accepted)).not.toBe(normalizeCode(challenge.answer))
     }
   })
+
+  it.each(lessons.map((lesson) => ({ id: lesson.title, lesson })))(
+    '$id: has at least 6 match pairs without duplicates',
+    ({ lesson }) => {
+      expect(lesson.matchPairs.length).toBeGreaterThanOrEqual(6)
+      expect(new Set(lesson.matchPairs.map((pair) => pair.left)).size).toBe(lesson.matchPairs.length)
+      expect(new Set(lesson.matchPairs.map((pair) => pair.right)).size).toBe(lesson.matchPairs.length)
+    },
+  )
+
+  it.each(lessons.map((lesson) => ({ id: lesson.title, lesson })))(
+    '$id: has at least 2 code-snippet questions',
+    ({ lesson }) => {
+      const withCode = getLessonChallenges(lesson).filter((challenge) => challenge.code)
+      expect(withCode.length).toBeGreaterThanOrEqual(2)
+    },
+  )
 })

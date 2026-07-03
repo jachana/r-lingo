@@ -29,7 +29,7 @@ export type Lesson = {
   }
   icon: 'play' | 'flask' | 'chart'
   challenges: Challenge[]
-  matchPairs?: MatchPair[]
+  matchPairs: MatchPair[]
 }
 
 export const lessons: Lesson[] = [
@@ -60,6 +60,14 @@ export const lessons: Lesson[] = [
       ],
     },
     icon: 'play',
+    matchPairs: [
+      { left: '<-', right: 'asigna un valor a un objeto' },
+      { left: '#', right: 'inicia un comentario' },
+      { left: 'casos / poblacion * 100000', right: 'calcula incidencia por 100.000' },
+      { left: 'casos_confirmados', right: 'nombre de objeto claro' },
+      { left: 'x1', right: 'nombre de objeto poco claro' },
+      { left: 'script', right: 'receta reproducible del análisis' },
+    ],
     challenges: [
       {
         prompt: 'Guarda el valor 42 en un objeto llamado tamano_muestra.',
@@ -127,6 +135,14 @@ export const lessons: Lesson[] = [
       ],
     },
     icon: 'play',
+    matchPairs: [
+      { left: 'c()', right: 'combina valores en un vector' },
+      { left: '"Santiago"', right: 'texto entre comillas' },
+      { left: '42', right: 'valor numérico' },
+      { left: 'TRUE', right: 'valor lógico verdadero' },
+      { left: 'FALSE', right: 'valor lógico falso' },
+      { left: 'class()', right: 'muestra el tipo de un objeto' },
+    ],
     challenges: [
       {
         prompt: 'Crea un vector con tres edades: 34, 45 y 52.',
@@ -194,6 +210,14 @@ export const lessons: Lesson[] = [
       ],
     },
     icon: 'flask',
+    matchPairs: [
+      { left: 'read.csv()', right: 'importa una tabla CSV' },
+      { left: 'head()', right: 'muestra primeras filas' },
+      { left: 'names()', right: 'lista nombres de columnas' },
+      { left: 'summary()', right: 'resume variables' },
+      { left: 'str()', right: 'muestra estructura y tipos' },
+      { left: 'data frame', right: 'tabla con filas y columnas' },
+    ],
     challenges: [
       {
         prompt: 'Lee un archivo CSV llamado vigilancia_respiratoria.csv y guárdalo como vigilancia.',
@@ -265,6 +289,14 @@ export const lessons: Lesson[] = [
       ],
     },
     icon: 'flask',
+    matchPairs: [
+      { left: 'select()', right: 'elige columnas' },
+      { left: 'filter()', right: 'elige filas' },
+      { left: 'mutate()', right: 'crea o modifica columnas' },
+      { left: 'NA', right: 'dato faltante' },
+      { left: 'is.na()', right: 'detecta faltantes' },
+      { left: 'sum(is.na())', right: 'cuenta datos faltantes' },
+    ],
     challenges: [
       {
         prompt: 'Con dplyr, qué verbo deja solo algunas columnas?',
@@ -329,6 +361,14 @@ export const lessons: Lesson[] = [
       ],
     },
     icon: 'chart',
+    matchPairs: [
+      { left: 'filter()', right: 'conserva filas que cumplen condiciones' },
+      { left: '==', right: 'compara igualdad' },
+      { left: '&', right: 'exige ambas condiciones' },
+      { left: '|', right: 'acepta una condición u otra' },
+      { left: '%in%', right: 'pertenece a un conjunto' },
+      { left: '>=', right: 'mayor o igual' },
+    ],
     challenges: [
       {
         prompt: 'Con dplyr cargado, qué expresión mantiene solo edad de 18 o más?',
@@ -399,6 +439,14 @@ export const lessons: Lesson[] = [
       ],
     },
     icon: 'chart',
+    matchPairs: [
+      { left: 'group_by()', right: 'define grupos para resumir' },
+      { left: 'count()', right: 'cuenta registros por grupo' },
+      { left: 'summarise()', right: 'calcula indicadores agregados' },
+      { left: 'mean()', right: 'calcula promedios' },
+      { left: 'na.rm = TRUE', right: 'ignora valores faltantes' },
+      { left: 'positivos / total * 100', right: 'calcula un porcentaje' },
+    ],
     challenges: [
       {
         prompt: 'Qué verbo agrupa una tabla por comuna antes de resumir?',
@@ -467,6 +515,14 @@ export const lessons: Lesson[] = [
       ],
     },
     icon: 'chart',
+    matchPairs: [
+      { left: 'ggplot()', right: 'inicia un gráfico' },
+      { left: 'aes()', right: 'declara variables visuales' },
+      { left: 'geom_point()', right: 'dibuja puntos' },
+      { left: 'geom_col()', right: 'dibuja barras con valores calculados' },
+      { left: 'geom_line()', right: 'muestra evolución temporal' },
+      { left: 'semana_epi', right: 'variable temporal para curva epidémica' },
+    ],
     challenges: [
       {
         prompt: 'Qué función inicia un gráfico con ggplot2?',
@@ -529,6 +585,14 @@ export const lessons: Lesson[] = [
       ],
     },
     icon: 'flask',
+    matchPairs: [
+      { left: 'as.Date()', right: 'convierte texto a fecha' },
+      { left: 'ymd()', right: 'lee año-mes-día' },
+      { left: 'dmy()', right: 'lee día-mes-año' },
+      { left: 'fecha_consulta - fecha_inicio', right: 'calcula demora en días' },
+      { left: 'mes_notificacion', right: 'agrupa reportes por mes' },
+      { left: 'fecha_inicio_sintomas', right: 'ubica inicio clínico del evento' },
+    ],
     challenges: [
       {
         prompt: 'Qué función base convierte texto a fecha?',
@@ -594,6 +658,14 @@ export const lessons: Lesson[] = [
       ],
     },
     icon: 'play',
+    matchPairs: [
+      { left: 'write.csv()', right: 'guarda una tabla CSV' },
+      { left: 'ggsave()', right: 'guarda un gráfico' },
+      { left: 'row.names = FALSE', right: 'evita columna extra de filas' },
+      { left: 'resumen.csv', right: 'archivo de tabla exportada' },
+      { left: 'curva.png', right: 'archivo de imagen de gráfico' },
+      { left: 'script', right: 'evidencia reproducible del resultado' },
+    ],
     challenges: [
       {
         prompt: 'Qué comando guarda una tabla resumen como CSV?',
@@ -857,6 +929,24 @@ export const extraChallenges: Record<string, Challenge[]> = {
       explain: 'Ese comentario explica una decisión relevante para el análisis.',
       concept: 'comentarios en scripts',
     },
+    {
+      prompt: '¿Qué devuelve R?',
+      context: 'Leer una expresión simple ayuda a anticipar indicadores antes de correr el script.',
+      code: 'casos <- 50\npoblacion <- 100000\ncasos / poblacion * 100000',
+      choices: ['50', '50000', '0.0005'],
+      answer: '50',
+      explain: 'Primero divide 50 por 100000 y luego multiplica por 100000, volviendo a 50.',
+      concept: 'cálculos con objetos',
+    },
+    {
+      prompt: 'Este código falla. ¿Dónde está el error?',
+      context: 'Detectar errores de nombres evita perder tiempo buscando datos inexistentes.',
+      code: 'casos_confirmados <- 342\ncasos_confirmado / poblacion * 100000',
+      choices: ['El objeto `casos_confirmado` no existe', 'El operador `/` no existe en R', '`poblacion` no puede usarse en tasas'],
+      answer: 'El objeto `casos_confirmado` no existe',
+      explain: 'R distingue nombres exactos: falta la `s` final de `casos_confirmados`.',
+      concept: 'nombres de objetos',
+    },
   ],
   'Vectores y tipos de datos': [
     {
@@ -914,6 +1004,24 @@ export const extraChallenges: Record<string, Challenge[]> = {
       explain: 'Ese comando crea un vector numérico con tres conteos.',
       concept: 'vectores con c()',
     },
+    {
+      prompt: '¿Qué devuelve R?',
+      context: 'Leer código y anticipar el resultado entrena el ojo analítico.',
+      code: 'edades <- c(34, 45, 52)\nlength(edades)',
+      choices: ['3', '131', 'Error: objeto no encontrado'],
+      answer: '3',
+      explain: '`length()` cuenta cuántos elementos tiene el vector, no los suma.',
+      concept: 'vectores con c()',
+    },
+    {
+      prompt: 'Este código falla. ¿Dónde está el error?',
+      context: 'El texto sin comillas es una causa frecuente de errores al crear vectores.',
+      code: 'comunas <- c(Santiago, Maipu)',
+      choices: ['Santiago y Maipu necesitan comillas', '`c()` solo acepta números', 'El nombre `comunas` es inválido'],
+      answer: 'Santiago y Maipu necesitan comillas',
+      explain: 'Sin comillas, R busca objetos llamados `Santiago` y `Maipu`.',
+      concept: 'texto y comillas',
+    },
   ],
   'Tablas de datos': [
     {
@@ -966,6 +1074,24 @@ export const extraChallenges: Record<string, Challenge[]> = {
       answer: 'Fecha en que la persona consultó',
       explain: 'Un nombre claro comunica el significado de la variable.',
       concept: 'nombres de columnas',
+    },
+    {
+      prompt: '¿Qué devuelve R?',
+      context: 'Una revisión rápida ayuda a confirmar si estás mirando la tabla correcta.',
+      code: 'names(vigilancia)',
+      choices: ['Los nombres de columnas', 'Las primeras seis filas', 'Un archivo CSV nuevo'],
+      answer: 'Los nombres de columnas',
+      explain: '`names()` devuelve los nombres disponibles para seleccionar, filtrar o resumir.',
+      concept: 'nombres de columnas',
+    },
+    {
+      prompt: 'Este código falla. ¿Dónde está el error?',
+      context: 'Importar archivos exige escribir bien el nombre de la función.',
+      code: 'vigilancia <- read_csv("vigilancia_respiratoria.csv")',
+      choices: ['`read_csv()` no es R base; aquí se enseñó `read.csv()`', 'El archivo CSV no puede tener guiones bajos', 'La asignación con `<-` está prohibida'],
+      answer: '`read_csv()` no es R base; aquí se enseñó `read.csv()`',
+      explain: '`read_csv()` existe en readr, pero en esta unidad usamos la función base `read.csv()`.',
+      concept: 'importar CSV',
     },
   ],
   'Limpieza inicial': [
@@ -1021,6 +1147,24 @@ export const extraChallenges: Record<string, Challenge[]> = {
       tokens: { parts: ['select(', 'comuna,', 'edad,', 'resultado_pcr', ')'], distractors: ['filter(', 'mutate('] },
       explain: 'Ese `select()` conserva columnas relevantes para el reporte.',
       concept: 'seleccionar columnas',
+    },
+    {
+      prompt: '¿Qué devuelve R?',
+      context: 'Contar faltantes antes de resumir protege la interpretación.',
+      code: 'edad <- c(34, NA, 52)\nsum(is.na(edad))',
+      choices: ['1', '3', 'NA'],
+      answer: '1',
+      explain: '`is.na()` marca solo el dato faltante y `sum()` cuenta ese TRUE.',
+      concept: 'contar NA',
+    },
+    {
+      prompt: 'Este código falla. ¿Dónde está el error?',
+      context: 'Los nombres de columnas nuevas deben ir a la izquierda del `=` en mutate.',
+      code: 'mutate(edad >= 60 = mayor_60)',
+      choices: ['La nueva columna debe llamarse `mayor_60` a la izquierda', '`mutate()` no crea columnas', '`>=` solo sirve con texto'],
+      answer: 'La nueva columna debe llamarse `mayor_60` a la izquierda',
+      explain: 'La forma correcta es `mutate(mayor_60 = edad >= 60)`.',
+      concept: 'crear columnas',
     },
   ],
   'Filtrar casos': [
@@ -1079,6 +1223,24 @@ export const extraChallenges: Record<string, Challenge[]> = {
       explain: '`"Santiago"` es texto; sin comillas R busca un objeto.',
       concept: 'filtrar filas',
     },
+    {
+      prompt: '¿Qué devuelve R?',
+      context: 'Leer condiciones ayuda a revisar criterios de inclusión.',
+      code: 'edad <- 62\nedad >= 60',
+      choices: ['TRUE', 'FALSE', '"62"'],
+      answer: 'TRUE',
+      explain: '62 es mayor o igual que 60, por eso la condición devuelve `TRUE`.',
+      concept: 'comparaciones',
+    },
+    {
+      prompt: 'Este código falla. ¿Dónde está el error?',
+      context: 'Detectar errores comunes ahorra horas frente a RStudio.',
+      code: 'filter(casos, comuna == Santiago)',
+      choices: ['Santiago necesita comillas', 'filter() no acepta dos argumentos', 'El operador == no existe en R'],
+      answer: 'Santiago necesita comillas',
+      explain: 'Sin comillas, R busca un objeto llamado Santiago en vez de comparar texto.',
+      concept: 'filtrar filas',
+    },
   ],
   'Resumir indicadores': [
     {
@@ -1130,6 +1292,24 @@ export const extraChallenges: Record<string, Challenge[]> = {
       explain: 'La incidencia necesita casos y población.',
       concept: 'calcular porcentajes',
     },
+    {
+      prompt: '¿Qué devuelve R?',
+      context: 'Anticipar un porcentaje ayuda a detectar resultados imposibles.',
+      code: 'positivos <- 25\ntotal <- 100\npositivos / total * 100',
+      choices: ['25', '0.25', '2500'],
+      answer: '25',
+      explain: '25 dividido por 100 da 0.25; multiplicado por 100 queda 25%.',
+      concept: 'calcular porcentajes',
+    },
+    {
+      prompt: 'Este código falla. ¿Dónde está el error?',
+      context: 'Los argumentos de funciones deben escribirse con nombres exactos.',
+      code: 'mean(edad, na.rm == TRUE)',
+      choices: ['Debe usarse `na.rm = TRUE`, no `==`', '`mean()` no acepta edades', '`TRUE` debe ir entre comillas'],
+      answer: 'Debe usarse `na.rm = TRUE`, no `==`',
+      explain: '`=` entrega el argumento a la función; `==` compara valores.',
+      concept: 'promedios con NA',
+    },
   ],
   'Visualizar datos': [
     {
@@ -1179,6 +1359,24 @@ export const extraChallenges: Record<string, Challenge[]> = {
       answer: 'Barras con geom_col()',
       explain: 'Las comunas son categorías; las barras facilitan la comparación.',
       concept: 'gráficos de barras',
+    },
+    {
+      prompt: '¿Qué devuelve R?',
+      context: 'Leer capas de ggplot ayuda a reconocer el tipo de gráfico antes de verlo.',
+      code: 'ggplot(resumen, aes(x = comuna, y = casos)) +\n  geom_col()',
+      choices: ['Un gráfico de barras por comuna', 'Una tabla CSV', 'Un mapa automático'],
+      answer: 'Un gráfico de barras por comuna',
+      explain: '`geom_col()` dibuja barras usando el valor de `casos` como altura.',
+      concept: 'gráficos de barras',
+    },
+    {
+      prompt: 'Este código falla. ¿Dónde está el error?',
+      context: 'Las capas de ggplot se suman con `+`.',
+      code: 'ggplot(resumen, aes(x = semana_epi, y = casos))\ngeom_line()',
+      choices: ['Falta `+` antes de `geom_line()`', '`semana_epi` no puede ir en x', '`geom_line()` solo sirve para texto'],
+      answer: 'Falta `+` antes de `geom_line()`',
+      explain: 'En ggplot2 las capas se agregan con `+` al gráfico base.',
+      concept: 'series temporales simples',
     },
   ],
   'Fechas y semanas': [
@@ -1230,6 +1428,24 @@ export const extraChallenges: Record<string, Challenge[]> = {
       explain: 'Conviene convertir texto a fecha antes de analizar tiempo.',
       concept: 'convertir fechas',
     },
+    {
+      prompt: '¿Qué devuelve R?',
+      context: 'Restar fechas permite medir demoras de atención.',
+      code: 'fecha_inicio <- as.Date("2026-07-02")\nfecha_consulta <- as.Date("2026-07-05")\nfecha_consulta - fecha_inicio',
+      choices: ['3 días', '7 días', 'Error: no se pueden restar fechas'],
+      answer: '3 días',
+      explain: 'Entre el 2 y el 5 de julio hay tres días de diferencia.',
+      concept: 'diferencia entre fechas',
+    },
+    {
+      prompt: 'Este código falla. ¿Dónde está el error?',
+      context: 'El formato de fecha debe coincidir con la función que lo lee.',
+      code: 'ymd("02-07-2026")',
+      choices: ['`ymd()` espera año-mes-día', 'Las fechas siempre van sin comillas', '`ymd()` solo acepta meses en texto'],
+      answer: '`ymd()` espera año-mes-día',
+      explain: 'Para día-mes-año corresponde `dmy("02-07-2026")`.',
+      concept: 'leer fechas con lubridate',
+    },
   ],
   'Exportar resultados': [
     {
@@ -1280,6 +1496,24 @@ export const extraChallenges: Record<string, Challenge[]> = {
       answer: 'cobertura_por_comuna.csv',
       explain: 'CSV es adecuado para tablas y puede abrirse en planillas.',
       concept: 'exportar CSV',
+    },
+    {
+      prompt: '¿Qué devuelve R?',
+      context: 'Leer una exportación ayuda a saber qué archivo se generará.',
+      code: 'write.csv(resumen, "resumen.csv", row.names = FALSE)',
+      choices: ['Un archivo `resumen.csv` sin nombres de fila', 'Un gráfico `resumen.csv`', 'Una tabla llamada FALSE'],
+      answer: 'Un archivo `resumen.csv` sin nombres de fila',
+      explain: '`write.csv()` guarda la tabla y `row.names = FALSE` evita una columna extra.',
+      concept: 'exportar CSV',
+    },
+    {
+      prompt: 'Este código falla. ¿Dónde está el error?',
+      context: 'Los nombres de archivo deben ir como texto entre comillas.',
+      code: 'ggsave(curva.png)',
+      choices: ['`curva.png` necesita comillas', '`ggsave()` no guarda gráficos', 'PNG no es un formato válido'],
+      answer: '`curva.png` necesita comillas',
+      explain: 'La forma correcta es `ggsave("curva.png")`.',
+      concept: 'guardar gráficos',
     },
   ],
 }
