@@ -30,6 +30,7 @@ import { TokenBank } from './components/TokenBank'
 import { WriteCard } from './components/WriteCard'
 import { checkTypedAnswer, type CheckResult } from './lib/checkAnswer'
 import { pickMode, type ChallengeMode } from './lib/pickMode'
+import { advanceQueue, buildQueue, requeueFailed, shouldReveal, type QueueItem } from './lib/sessionQueue'
 import { seededShuffle } from './lib/shuffle'
 
 const iconMap = {
@@ -80,24 +81,6 @@ type StoredProgress = {
 
 const progressStorageKey = 'r-lingo-progress-v2'
 
-function getFirstIncompleteChallengeIndex(lessonPosition: number, completed: string[]) {
-  const lessonChallengeCount = getLessonChallenges(lessons[lessonPosition]).length
-  const firstIncomplete = Array.from({ length: lessonChallengeCount }, (_, index) => index).find(
-    (index) => !completed.includes(getChallengeKey(lessonPosition, index)),
-  )
-
-  return firstIncomplete ?? lessonChallengeCount - 1
-}
-
-function getNextIncompleteChallengeIndex(lessonPosition: number, currentPosition: number, completed: string[]) {
-  const lessonChallengeCount = getLessonChallenges(lessons[lessonPosition]).length
-  const nextIncomplete = Array.from({ length: lessonChallengeCount }, (_, offset) => (currentPosition + offset + 1) % lessonChallengeCount).find(
-    (index) => !completed.includes(getChallengeKey(lessonPosition, index)),
-  )
-
-  return nextIncomplete ?? Math.min(currentPosition + 1, lessonChallengeCount - 1)
-}
-
 function getFreshProgress(): StoredProgress {
   return { lessonIndex: 0, challengeIndex: 0, hearts: 5, streak: 0, completedCorrect: [], xp: 0 }
 }
@@ -114,8 +97,9 @@ function readStoredProgress(): StoredProgress {
     const safeLesson = lessons[safeLessonIndex]
     const completedCorrect = Array.isArray(parsed.completedCorrect) ? parsed.completedCorrect : []
     const safeChallengeIndex = Math.min(Math.max(parsed.challengeIndex ?? 0, 0), getLessonChallenges(safeLesson).length - 1)
+    const queue = buildQueue(safeLessonIndex, getLessonChallenges(safeLesson).length, completedCorrect)
     const resumeChallengeIndex = completedCorrect.includes(getChallengeKey(safeLessonIndex, safeChallengeIndex))
-      ? getFirstIncompleteChallengeIndex(safeLessonIndex, completedCorrect)
+      ? (queue[0]?.challengeIndex ?? 0)
       : safeChallengeIndex
 
     return {
@@ -134,7 +118,22 @@ function readStoredProgress(): StoredProgress {
 function App() {
   const [initialProgress] = useState(readStoredProgress)
   const [lessonIndex, setLessonIndex] = useState(initialProgress.lessonIndex)
-  const [challengeIndex, setChallengeIndex] = useState(initialProgress.challengeIndex)
+  const [queue, setQueue] = useState<QueueItem[]>(() =>
+    buildQueue(
+      initialProgress.lessonIndex,
+      getLessonChallenges(lessons[initialProgress.lessonIndex]).length,
+      initialProgress.completedCorrect,
+    ),
+  )
+  const [phase, setPhase] = useState<'practice' | 'match' | 'done'>(() =>
+    buildQueue(
+      initialProgress.lessonIndex,
+      getLessonChallenges(lessons[initialProgress.lessonIndex]).length,
+      initialProgress.completedCorrect,
+    ).length === 0
+      ? 'done'
+      : 'practice',
+  )
   const [selected, setSelected] = useState('')
   const [checked, setChecked] = useState(false)
   const [checkResult, setCheckResult] = useState<CheckResult>({ correct: false })
@@ -148,12 +147,14 @@ function App() {
   const lesson = lessons[lessonIndex]
   const lessonChallenges = getLessonChallenges(lesson)
   const support = lessonSupport[lesson.title]
+  const currentItem = queue[0]
+  const challengeIndex = currentItem?.challengeIndex ?? 0
   const challenge = lessonChallenges[challengeIndex]
-  const isLastChallenge = lessonIndex === lessons.length - 1 && challengeIndex === lessonChallenges.length - 1
-  const isLastChallengeInUnit = challengeIndex === lessonChallenges.length - 1
   const challengeKey = getChallengeKey(lessonIndex, challengeIndex)
-  const isAlreadyCompleted = completedCorrect.includes(challengeKey)
-  const challengeMode = pickMode(challenge, `${challengeKey}-a0`)
+  const challengeMode = currentItem
+    ? pickMode(challenge, `${challengeKey}-a${currentItem.attempts}`, currentItem.failedModes.at(-1))
+    : 'choice'
+  const revealOnWrong = currentItem ? shouldReveal(currentItem) : false
   const shuffledChoices = useMemo(
     () => seededShuffle(challenge.choices, `${challengeKey}-${challenge.answer}`),
     [challenge.choices, challenge.answer, challengeKey],
@@ -169,9 +170,9 @@ function App() {
   }, [completedCorrect.length, totalChallenges])
 
   useEffect(() => {
-    const progressToStore: StoredProgress = { lessonIndex, challengeIndex, hearts, streak, completedCorrect, xp }
+    const progressToStore: StoredProgress = { lessonIndex, challengeIndex: queue[0]?.challengeIndex ?? 0, hearts, streak, completedCorrect, xp }
     window.localStorage.setItem(progressStorageKey, JSON.stringify(progressToStore))
-  }, [lessonIndex, challengeIndex, hearts, streak, completedCorrect, xp])
+  }, [lessonIndex, queue, hearts, streak, completedCorrect, xp])
 
   useEffect(() => {
     if (!celebration) return
@@ -180,6 +181,7 @@ function App() {
   }, [celebration])
 
   function checkAnswer() {
+    if (!currentItem) return
     if (!selected.trim()) return
     const result =
       challengeMode === 'choice'
@@ -194,15 +196,15 @@ function App() {
         return [...completed, challengeKey]
       })
       setStreak((count) => count + 1)
-      playFeedbackSound(isLastChallengeInUnit ? 'unit' : 'correct')
+      playFeedbackSound('correct')
       if (isNewCompletion) {
         setXp((currentXp) => {
           const nextXp = currentXp + 20
-          setCelebration(isLastChallengeInUnit ? 'unit' : nextXp % 100 < currentXp % 100 ? 'level' : 'correct')
+          setCelebration(nextXp % 100 < currentXp % 100 ? 'level' : 'correct')
           return nextXp
         })
       } else {
-        setCelebration(isLastChallengeInUnit ? 'unit' : 'correct')
+        setCelebration('correct')
       }
     } else {
       playFeedbackSound('wrong')
@@ -211,18 +213,26 @@ function App() {
     }
   }
 
-  function nextChallenge() {
-    const hasNextChallenge = challengeIndex < lessonChallenges.length - 1
-    const hasNextLesson = lessonIndex < lessons.length - 1
+  function continueSession() {
+    const nextQueue = checkResult.correct ? advanceQueue(queue) : requeueFailed(queue, challengeMode)
+    setQueue(nextQueue)
+    if (nextQueue.length === 0) setPhase('match')
+    setSelected('')
+    setChecked(false)
+    setCheckResult({ correct: false })
+  }
 
-    if (hasNextChallenge) {
-      setChallengeIndex((index) => getNextIncompleteChallengeIndex(lessonIndex, index, completedCorrect))
-    } else if (hasNextLesson) {
-      setLessonIndex((index) => index + 1)
-      setChallengeIndex(getFirstIncompleteChallengeIndex(lessonIndex + 1, completedCorrect))
+  function advanceLesson() {
+    if (lessonIndex < lessons.length - 1) {
+      const nextLessonIndex = lessonIndex + 1
+      const nextQueue = buildQueue(nextLessonIndex, getLessonChallenges(lessons[nextLessonIndex]).length, completedCorrect)
+      setLessonIndex(nextLessonIndex)
+      setQueue(nextQueue)
+      setPhase(nextQueue.length === 0 ? 'done' : 'practice')
       setShowTheory(true)
+    } else {
+      setPhase('done')
     }
-
     setSelected('')
     setChecked(false)
     setCheckResult({ correct: false })
@@ -230,7 +240,8 @@ function App() {
 
   function restart() {
     setLessonIndex(0)
-    setChallengeIndex(0)
+    setQueue(buildQueue(0, getLessonChallenges(lessons[0]).length, []))
+    setPhase('practice')
     setSelected('')
     setChecked(false)
     setCheckResult({ correct: false })
@@ -316,8 +327,10 @@ function App() {
                 className={`lesson-node ${active ? 'active' : ''} ${complete ? 'complete' : ''}`}
                 key={item.title}
                 onClick={() => {
+                  const nextQueue = buildQueue(index, getLessonChallenges(lessons[index]).length, completedCorrect)
                   setLessonIndex(index)
-                  setChallengeIndex(getFirstIncompleteChallengeIndex(index, completedCorrect))
+                  setQueue(nextQueue)
+                  setPhase(nextQueue.length === 0 ? 'done' : 'practice')
                   setSelected('')
                   setChecked(false)
                   setCheckResult({ correct: false })
@@ -423,7 +436,7 @@ function App() {
                 </button>
               </div>
             </article>
-          ) : (
+          ) : phase === 'practice' && currentItem ? (
             <>
               <div className="question-count">
                 {challengeIndex + 1} de {lessonChallenges.length}
@@ -440,17 +453,17 @@ function App() {
               {challengeMode === 'choice' ? (
                 <ChoiceList
                   answer={challenge.answer}
-                  checked={checked || isAlreadyCompleted}
+                  checked={checked}
                   choices={shuffledChoices}
-                  disabled={checked || isAlreadyCompleted}
+                  disabled={checked}
                   onSelect={setSelected}
                   selected={selected}
                 />
               ) : challengeMode === 'tokens' && challenge.tokens ? (
                 <TokenBank
-                  checked={checked || isAlreadyCompleted}
-                  correct={isCorrect || isAlreadyCompleted}
-                  disabled={checked || isAlreadyCompleted}
+                  checked={checked}
+                  correct={isCorrect}
+                  disabled={checked}
                   distractors={challenge.tokens.distractors}
                   key={challengeKey}
                   onChange={setSelected}
@@ -459,26 +472,26 @@ function App() {
                 />
               ) : (
                 <WriteCard
-                  checked={checked || isAlreadyCompleted}
-                  correct={isCorrect || isAlreadyCompleted}
-                  disabled={checked || isAlreadyCompleted}
+                  checked={checked}
+                  correct={isCorrect}
+                  disabled={checked}
                   gapTemplate={challenge.gap?.template}
                   hint={checkResult.hint}
                   mode={challengeMode === 'gap' ? 'gap' : 'write'}
                   onChange={setSelected}
-                  revealedAnswer={checked && !isCorrect ? (challengeMode === 'gap' ? challenge.gap?.blank : challenge.answer) : undefined}
+                  revealedAnswer={checked && !isCorrect && revealOnWrong ? (challengeMode === 'gap' ? challenge.gap?.blank : challenge.answer) : undefined}
                   value={selected}
                 />
               )}
 
-              {(checked || isAlreadyCompleted) && (
+              {checked && (
                 <FeedbackCard
                   concept={challenge.concept}
-                  correct={isCorrect || isAlreadyCompleted}
-                  explain={isAlreadyCompleted && !checked ? 'Esta ya quedó respondida. Puedes continuar con la próxima.' : challenge.explain}
+                  correct={isCorrect}
+                  explain={challenge.explain}
                   hint={checkResult.hint}
                   onReviewConcept={() => setShowTheory(true)}
-                  revealedAnswer={checked && !isCorrect ? (challengeMode === 'gap' ? challenge.gap?.blank : challenge.answer) : undefined}
+                  revealedAnswer={checked && !isCorrect && revealOnWrong ? (challengeMode === 'gap' ? challenge.gap?.blank : challenge.answer) : undefined}
                 />
               )}
 
@@ -487,10 +500,10 @@ function App() {
                   <RotateCcw size={18} aria-hidden="true" />
                   Reiniciar
                 </button>
-                {checked || isAlreadyCompleted ? (
-                  <button className="primary" onClick={isLastChallenge ? restart : nextChallenge} type="button">
-                    {isLastChallenge ? 'Reiniciar curso' : 'Continuar'}
-                    {isLastChallenge ? <RotateCcw size={18} aria-hidden="true" /> : <ChevronRight size={18} aria-hidden="true" />}
+                {checked ? (
+                  <button className="primary" onClick={continueSession} type="button">
+                    Continuar
+                    <ChevronRight size={18} aria-hidden="true" />
                   </button>
                 ) : (
                   <button className="primary" disabled={!selected.trim()} onClick={checkAnswer} type="button">
@@ -498,6 +511,40 @@ function App() {
                     <Check size={18} aria-hidden="true" />
                   </button>
                 )}
+              </div>
+            </>
+          ) : phase === 'match' ? (
+            <>
+              <h2>Repaso de la unidad</h2>
+              <p className="context">Última prueba antes de cerrar {lesson.title}.</p>
+              <div className="feedback good">
+                <strong>Repaso de la unidad</strong>
+                <span>Disponible en la próxima tarea.</span>
+              </div>
+              <div className="actions">
+                <button className="secondary" onClick={restart} type="button">
+                  <RotateCcw size={18} aria-hidden="true" />
+                  Reiniciar
+                </button>
+                <button className="primary" onClick={advanceLesson} type="button">
+                  Continuar
+                  <ChevronRight size={18} aria-hidden="true" />
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <h2>Unidad completa</h2>
+              <p className="context">Ya no quedan preguntas pendientes en esta unidad.</p>
+              <div className="feedback good">
+                <strong>Buen trabajo.</strong>
+                <span>Tu progreso quedó guardado en este dispositivo.</span>
+              </div>
+              <div className="actions">
+                <button className="secondary" onClick={restart} type="button">
+                  <RotateCcw size={18} aria-hidden="true" />
+                  Reiniciar curso
+                </button>
               </div>
             </>
           )}
