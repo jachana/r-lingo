@@ -43,12 +43,36 @@ function findCaseMismatch(input: string, candidate: string): { want: string; got
   return undefined
 }
 
+function parseStringVectorAssignment(value: string): string[] | undefined {
+  const match = value.match(/^([A-Za-z.][A-Za-z0-9._]*)\s*(?:<-|=)\s*c\s*\((.*)\)$/)
+  if (!match) return undefined
+
+  const [, , rawValues] = match
+  const values = rawValues.split(',').map((item) => item.trim())
+  if (values.length === 0) return undefined
+  if (!values.every((item) => /^"([^"\\]|\\.)*"$/.test(item))) return undefined
+
+  return values.map((item) => item.slice(1, -1).trim().toLocaleLowerCase('es-CL'))
+}
+
+function isEquivalentStringVectorAssignment(input: string, expected: string[]) {
+  const parsedInput = parseStringVectorAssignment(input)
+  if (!parsedInput) return false
+
+  return expected.some((candidate) => {
+    const parsedCandidate = parseStringVectorAssignment(candidate)
+    if (!parsedCandidate) return false
+    return parsedInput.length > 0
+  })
+}
+
 export function checkTypedAnswer(input: string, expected: string[]): CheckResult {
   const normalizedInput = normalizeCode(input)
   if (!normalizedInput) return { correct: false }
   const normalizedExpected = expected.map(normalizeCode)
 
   if (normalizedExpected.includes(normalizedInput)) return { correct: true }
+  if (isEquivalentStringVectorAssignment(normalizedInput, normalizedExpected)) return { correct: true }
 
   const caseMatch = normalizedExpected.find(
     (candidate) => candidate.toLowerCase() === normalizedInput.toLowerCase(),

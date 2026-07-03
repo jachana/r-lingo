@@ -50,6 +50,21 @@ describe('checkTypedAnswer', () => {
     expect(checkTypedAnswer("filter(comuna == 'Santiago')", ['filter(comuna == "Santiago")']).correct).toBe(true)
   })
 
+  it('accepts case and object-name variants for string vector creation', () => {
+    const expectedVector = ['comunas <- c("Santiago", "Maipu")']
+
+    expect(checkTypedAnswer('comunas <- c("santiago","maipu")', expectedVector).correct).toBe(true)
+    expect(checkTypedAnswer('zonas = c("Santiago", "Maipu")', expectedVector).correct).toBe(true)
+    expect(checkTypedAnswer('mis_comunas <- c("providencia", "nunoa", "la florida")', expectedVector).correct).toBe(true)
+  })
+
+  it('does not accept unquoted values as string vector creation', () => {
+    const result = checkTypedAnswer('comunas <- c(Santiago, Maipu)', ['comunas <- c("Santiago", "Maipu")'])
+
+    expect(result.correct).toBe(false)
+    expect(result.hint).toContain('comillas')
+  })
+
   it('rejects case differences with a specific hint', () => {
     const result = checkTypedAnswer('mean(edad, na.rm = true)', expected)
     expect(result.correct).toBe(false)
