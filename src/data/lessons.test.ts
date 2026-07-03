@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { normalizeCode } from '../lib/checkAnswer'
 import { extraChallenges, getLessonChallenges, lessons } from './lessons'
 
 const allChallenges = lessons.flatMap((lesson) =>
@@ -29,5 +30,27 @@ describe('content integrity', () => {
     expect(challenge.prompt.trim().length).toBeGreaterThan(0)
     expect(challenge.explain.trim().length).toBeGreaterThan(0)
     expect(challenge.concept.trim().length).toBeGreaterThan(0)
+  })
+
+  it.each(allChallenges)('$id: gap template reconstructs the answer', ({ challenge }) => {
+    if (!challenge.gap) return
+    expect(challenge.gap.template.split('____').length, 'template debe tener exactamente un ____').toBe(2)
+    const rebuilt = challenge.gap.template.replace('____', challenge.gap.blank)
+    expect(normalizeCode(rebuilt)).toBe(normalizeCode(challenge.answer))
+  })
+
+  it.each(allChallenges)('$id: token parts join to the answer', ({ challenge }) => {
+    if (!challenge.tokens) return
+    expect(normalizeCode(challenge.tokens.parts.join(' '))).toBe(normalizeCode(challenge.answer))
+    expect(challenge.tokens.distractors.length).toBeGreaterThanOrEqual(2)
+    for (const distractor of challenge.tokens.distractors) {
+      expect(challenge.tokens.parts).not.toContain(distractor)
+    }
+  })
+
+  it.each(allChallenges)('$id: acceptedAnswers do not duplicate the answer', ({ challenge }) => {
+    for (const accepted of challenge.acceptedAnswers ?? []) {
+      expect(normalizeCode(accepted)).not.toBe(normalizeCode(challenge.answer))
+    }
   })
 })

@@ -1,8 +1,14 @@
+export type MatchPair = { left: string; right: string }
+
 export type Challenge = {
   prompt: string
   context: string
+  code?: string
   choices: string[]
   answer: string
+  acceptedAnswers?: string[]
+  gap?: { template: string; blank: string; acceptedBlanks?: string[] }
+  tokens?: { parts: string[]; distractors: string[] }
   explain: string
   concept: string
 }
@@ -23,6 +29,7 @@ export type Lesson = {
   }
   icon: 'play' | 'flask' | 'chart'
   challenges: Challenge[]
+  matchPairs?: MatchPair[]
 }
 
 export const lessons: Lesson[] = [
