@@ -6,7 +6,8 @@ Incluye:
 
 - 9 unidades iniciales sobre R, datos, limpieza, filtros, indicadores, gráficos, fechas y exportación.
 - Bloques teoricos opcionales por unidad.
-- Ejercicios de seleccion multiple con feedback inmedíato.
+- Ejercicios de seleccion multiple, escritura directa, relleno de espacios, bloques tipo token-bank, lectura de codigo y repaso de emparejar conceptos.
+- Reintentos estilo Duolingo: una respuesta incorrecta vuelve al final de la cola en otro modo, con pistas antes de revelar la respuesta.
 - Enlaces a documentación desde unidades, feedback y referencia rapida.
 - Vidas, racha, XP, niveles y celebraciones.
 - Progreso offline en `localStorage`, sin usuarios ni base de datos.
