@@ -1232,3 +1232,43 @@ button {
     width: 100%;
   }
 }
+
+.backup-panel {
+  max-width: 1400px;
+  margin: 24px auto;
+  padding: 20px;
+  border: 2px solid #cfe3d7;
+  border-radius: 8px;
+  background: white;
+}
+
+.backup-panel label,
+.backup-panel textarea {
+  display: block;
+  margin: 16px 0;
+  width: 100%;
+}
+
+.backup-panel textarea { min-height: 100px; }
+
+.skip-link { position: absolute; left: 12px; top: -100px; z-index: 30; padding: 12px; background: white; }
+.skip-link:focus { top: 12px; }
+.challenge-panel { min-width: 0; }
+.topbar h1 { font-size: clamp(1.6rem, 3vw, 2.6rem); line-height: 1.1; }
+.backup-panel input[type='checkbox'] { width: auto; }
+.practical-assignment { margin: 16px 0; line-height: 1.5; }
+.practical-assignment a { display: block; padding: 8px 0; }
+.goal-choice { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 12px; }
+.goal-choice select { min-width: 70px; min-height: 44px; }
+.learning-rules, .concept-progress p { font-size: 0.9rem; line-height: 1.5; margin: 12px 0; }
+.concept-progress { margin: 20px 0; }
+
+@media (max-width: 760px) {
+  .learning-grid { display: flex; flex-direction: column; }
+  .challenge-panel { order: 0; }
+  .lesson-path { order: 1; }
+  .reference-panel { order: 2; }
+  .topbar h1 { font-size: 1.7rem; }
+  .match-grid { grid-template-columns: 1fr 1fr; }
+  .match-option { overflow-wrap: anywhere; min-width: 0; padding: 10px; }
+}

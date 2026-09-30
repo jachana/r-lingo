@@ -3,6 +3,7 @@ import type { Challenge } from '../data/lessons'
 import { pickMode, supportedModes } from './pickMode'
 
 const base: Challenge = {
+  id: 'test-question',
   prompt: 'p',
   context: 'c',
   choices: ['a', 'b'],

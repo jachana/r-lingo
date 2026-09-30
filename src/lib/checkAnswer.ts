@@ -13,11 +13,12 @@ const operatorPlaceholders: [string, string][] = [
 ]
 
 export function normalizeCode(value: string): string {
-  let out = value.trim().replace(/'/g, '"')
+  let out = value.trim()
   const stringLiterals: string[] = []
-  out = out.replace(/"([^"\\]|\\.)*"/g, (literal) => {
+  out = out.replace(/"([^"\\]|\\.)*"|'([^'\\]|\\.)*'/g, (literal) => {
     const placeholder = `\uE007${stringLiterals.length}\uE007`
-    stringLiterals.push(literal)
+    const body = literal.slice(1, -1).replace(/\\(['"\\])/g, '$1')
+    stringLiterals.push(JSON.stringify(body))
     return placeholder
   })
   for (const [op, placeholder] of operatorPlaceholders) out = out.split(op).join(placeholder)
@@ -44,15 +45,14 @@ function findCaseMismatch(input: string, candidate: string): { want: string; got
 }
 
 function parseStringVectorAssignment(value: string): string[] | undefined {
-  const match = value.match(/^([A-Za-z.][A-Za-z0-9._]*)\s*(?:<-|=)\s*c\s*\((.*)\)$/)
+  const match = value.match(/^((?:[A-Za-z]|\.(?!\d))[A-Za-z0-9._]*)\s*(?:<-|=)\s*c\s*\((.*)\)$/)
   if (!match) return undefined
 
-  const [, , rawValues] = match
-  const values = rawValues.split(',').map((item) => item.trim())
-  if (values.length === 0) return undefined
-  if (!values.every((item) => /^"([^"\\]|\\.)*"$/.test(item))) return undefined
-
-  return values.map((item) => item.slice(1, -1).trim().toLocaleLowerCase('es-CL'))
+  const [, name, rawValues] = match
+  if (['if', 'else', 'repeat', 'while', 'function', 'for', 'in', 'next', 'break',
+    'TRUE', 'FALSE', 'NULL', 'Inf', 'NaN', 'NA', 'NA_integer_', 'NA_real_', 'NA_complex_', 'NA_character_'].includes(name)) return undefined
+  if (!/^\s*"([^"\\]|\\.)*"(?:\s*,\s*"([^"\\]|\\.)*")*\s*$/.test(rawValues)) return undefined
+  return rawValues.match(/"([^"\\]|\\.)*"/g) ?? undefined
 }
 
 function isEquivalentStringVectorAssignment(input: string, expected: string[]) {
@@ -66,13 +66,13 @@ function isEquivalentStringVectorAssignment(input: string, expected: string[]) {
   })
 }
 
-export function checkTypedAnswer(input: string, expected: string[]): CheckResult {
+export function checkTypedAnswer(input: string, expected: string[], policy: 'exact' | 'string-vector' = 'exact'): CheckResult {
   const normalizedInput = normalizeCode(input)
   if (!normalizedInput) return { correct: false }
   const normalizedExpected = expected.map(normalizeCode)
 
   if (normalizedExpected.includes(normalizedInput)) return { correct: true }
-  if (isEquivalentStringVectorAssignment(normalizedInput, normalizedExpected)) return { correct: true }
+  if (policy === 'string-vector' && isEquivalentStringVectorAssignment(normalizedInput, normalizedExpected)) return { correct: true }
 
   const caseMatch = normalizedExpected.find(
     (candidate) => candidate.toLowerCase() === normalizedInput.toLowerCase(),

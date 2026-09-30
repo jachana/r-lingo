@@ -1,0 +1,58 @@
+{
+  "date": "2026-09-30",
+  "browser": "Codex in-app browser desktop",
+  "productionServerStopped": true,
+  "scope": "Full first-unit replay: 12 questions and 4 matching pairs, then reload. Networking to other destinations was not disabled.",
+  "questions": [
+    {
+      "prompt": "Guarda el valor 42 en un objeto llamado tamano_muestra.",
+      "correct": true
+    },
+    {
+      "prompt": "Cuál línea agrega un comentario en un script de R?",
+      "correct": true
+    },
+    {
+      "prompt": "Cuál nombre de objeto es más claro para guardar casos confirmados?",
+      "correct": true
+    },
+    {
+      "prompt": "Qué comando calcula casos por 100.000 habitantes si ya existen casos y población?",
+      "correct": true
+    },
+    {
+      "prompt": "Qué línea guarda 125000 como población comunal?",
+      "correct": true
+    },
+    {
+      "prompt": "Cuál objeto está mejor nombrado para guardar positivos de PCR?",
+      "correct": true
+    },
+    {
+      "prompt": "Qué línea explica una decisión sin ejecutarse?",
+      "correct": true
+    },
+    {
+      "prompt": "Si casos = 50 y poblacion = 100000, qué calcula incidencia?",
+      "correct": true
+    },
+    {
+      "prompt": "Qué objeto conviene evitar por poco claro?",
+      "correct": true
+    },
+    {
+      "prompt": "Qué comentario sería útil en un análisis de brote?",
+      "correct": true
+    },
+    {
+      "prompt": "¿Qué devuelve R?",
+      "correct": true
+    },
+    {
+      "prompt": "Este código falla. ¿Dónde está el error?",
+      "correct": true
+    }
+  ],
+  "completed": true,
+  "xpPreserved": true
+}

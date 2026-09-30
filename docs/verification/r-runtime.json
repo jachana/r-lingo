@@ -1,0 +1,52 @@
+{
+  "verifiedAt": "2026-09-30T15:41:59.373Z",
+  "runtime": "R version 4.6.0 (2026-04-24)",
+  "webR": "0.6.0",
+  "packages": {
+    "dplyr": "1.2.1",
+    "ggplot2": "4.0.3",
+    "lubridate": "1.9.5"
+  },
+  "theoryScripts": [
+    "r-basics",
+    "vectors",
+    "tables",
+    "cleaning",
+    "filtering",
+    "indicators",
+    "plots",
+    "dates",
+    "export"
+  ],
+  "predictionSnippets": [
+    "r-basics-q11",
+    "vectors-q11",
+    "tables-q11",
+    "cleaning-q11",
+    "filtering-q11",
+    "indicators-q11",
+    "plots-q11",
+    "dates-q11",
+    "export-q11"
+  ],
+  "intentionalErrors": [
+    "r-basics-q12",
+    "vectors-q12",
+    "tables-q12",
+    "cleaning-q12",
+    "filtering-q12",
+    "indicators-q12",
+    "export-q12"
+  ],
+  "assertions": [
+    "numeric results",
+    "Date difference",
+    "CSV without row names",
+    "PNG export",
+    "date format mismatch",
+    "unattached ggplot layer",
+    "independent assignment",
+    "baseline reference",
+    "seven-day reference"
+  ]
+}

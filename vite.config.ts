@@ -7,7 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'app-icon.svg'],
+      includeAssets: ['favicon.svg', 'app-icon.svg', 'apple-touch-icon.png'],
       manifest: {
         name: 'R-Lingo',
         short_name: 'R-Lingo',
@@ -23,12 +23,15 @@ export default defineConfig({
             src: '/app-icon.svg',
             sizes: 'any',
             type: 'image/svg+xml',
-            purpose: 'any máskable',
+            purpose: 'any',
           },
+          { src: '/app-icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: '/app-icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: '/app-icon-maskable.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest,csv,R,md}'],
         navigateFallback: '/index.html',
       },
     }),

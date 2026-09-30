@@ -1,0 +1,14 @@
+id,comuna,edad,resultado,fecha_inicio,fecha_consulta
+101,Valparaiso,34,confirmado,2026-08-01,2026-08-03
+102,Valparaiso,12,confirmado,2026-08-01,2026-08-02
+103,Valparaiso,20,negativo,2026-08-02,2026-08-04
+104,Valparaiso,50,confirmado,2026-08-02,2026-08-05
+105,Concepcion,-2,confirmado,2026-08-03,2026-08-05
+106,Concepcion,65,confirmado,2026-08-03,2026-08-06
+107,Concepcion,45,confirmado,2026-08-04,2026-08-06
+108,Concepcion,,negativo,2026-08-04,2026-08-07
+109,Temuco,18,confirmado,2026-08-05,2026-08-08
+110,Temuco,16,confirmado,2026-08-05,2026-08-07
+111,Temuco,72,confirmado,2026-08-06,2026-08-10
+112,Temuco,,negativo,2026-08-06,2026-08-08
+105,Concepcion,-2,confirmado,2026-08-03,2026-08-05

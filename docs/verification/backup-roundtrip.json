@@ -1,0 +1,19 @@
+{
+  "verifiedAt": "2026-09-30T16:08:41.6647678Z",
+  "chromeExportDownloaded": true,
+  "sameBrowserExportImported": true,
+  "exportHashesMatch": false,
+  "bytes": 2325,
+  "exportedXp": 20,
+  "changedXpBeforeImport": 40,
+  "importedXp": 20,
+  "importedQuestion": "r-basics-q01",
+  "checkedFeedbackPreservedAfterReload": true,
+  "fixture": "fixtures/browser-export.json",
+  "automationDownloadEventTimedOut": true,
+  "chromeAutomatedFileChooser": "Unavailable without extra extension file URL permission; permission left unchanged",
+  "importBrowser": "Codex in-app browser",
+  "exportedStateMatches": true,
+  "sha256Chrome": "fea03d75ac64c1bf8f48cdead0ad7db1186d37fe3cc13156180663d805de8d63",
+  "sha256InApp": "d8161522564fc9d5dcd807d35e4d3403b61a7863264eb84bda566b45dc81cdcf"
+}

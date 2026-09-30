@@ -3,18 +3,20 @@ import { BookOpen } from 'lucide-react'
 type FeedbackCardProps = {
   correct: boolean
   explain: string
+  learningHint: string
+  revealExplanation: boolean
   hint?: string
   revealedAnswer?: string
   concept: string
   onReviewConcept: () => void
 }
 
-export function FeedbackCard({ correct, explain, hint, revealedAnswer, concept, onReviewConcept }: FeedbackCardProps) {
+export function FeedbackCard({ correct, explain, learningHint, revealExplanation, hint, revealedAnswer, concept, onReviewConcept }: FeedbackCardProps) {
   return (
-    <div className={`feedback ${correct ? 'good' : 'try-again'}`}>
+    <div className={`feedback ${correct ? 'good' : 'try-again'}`} role="status">
       <strong>{correct ? 'Bien ahí. Tu racha de análisis sigue viva.' : 'Casi, pero no es esta.'}</strong>
       {hint && !correct && <span className="feedback-hint">{hint}</span>}
-      <span>{explain}</span>
+      <span>{correct || revealExplanation ? explain : learningHint}</span>
       {revealedAnswer && !correct && (
         <span>
           Respuesta esperada: <code>{revealedAnswer}</code>

@@ -1,0 +1,511 @@
+{
+  "date": "2026-09-30",
+  "origin": "http://127.0.0.1:5175",
+  "modeFixture": "r-basics-q01; attempts chosen to exercise each mode; wrong state may reveal after prior attempts",
+  "checks": [
+    {
+      "mode": "choice",
+      "state": "unanswered",
+      "width": 320,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "choice",
+      "state": "unanswered",
+      "width": 390,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "choice",
+      "state": "unanswered",
+      "width": 768,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "choice",
+      "state": "unanswered",
+      "width": 1280,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "choice",
+      "state": "wrong",
+      "width": 320,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "choice",
+      "state": "wrong",
+      "width": 390,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "choice",
+      "state": "wrong",
+      "width": 768,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "choice",
+      "state": "wrong",
+      "width": 1280,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "choice",
+      "state": "correct",
+      "width": 320,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "choice",
+      "state": "correct",
+      "width": 390,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "choice",
+      "state": "correct",
+      "width": 768,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "choice",
+      "state": "correct",
+      "width": 1280,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "write",
+      "state": "unanswered",
+      "width": 320,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "write",
+      "state": "unanswered",
+      "width": 390,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "write",
+      "state": "unanswered",
+      "width": 768,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "write",
+      "state": "unanswered",
+      "width": 1280,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "write",
+      "state": "wrong",
+      "width": 320,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "write",
+      "state": "wrong",
+      "width": 390,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "write",
+      "state": "wrong",
+      "width": 768,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "write",
+      "state": "wrong",
+      "width": 1280,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "write",
+      "state": "correct",
+      "width": 320,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "write",
+      "state": "correct",
+      "width": 390,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "write",
+      "state": "correct",
+      "width": 768,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "write",
+      "state": "correct",
+      "width": 1280,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "gap",
+      "state": "unanswered",
+      "width": 320,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "gap",
+      "state": "unanswered",
+      "width": 390,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "gap",
+      "state": "unanswered",
+      "width": 768,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "gap",
+      "state": "unanswered",
+      "width": 1280,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "gap",
+      "state": "wrong",
+      "width": 320,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "gap",
+      "state": "wrong",
+      "width": 390,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "gap",
+      "state": "wrong",
+      "width": 768,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "gap",
+      "state": "wrong",
+      "width": 1280,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "gap",
+      "state": "correct",
+      "width": 320,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "gap",
+      "state": "correct",
+      "width": 390,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "gap",
+      "state": "correct",
+      "width": 768,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "gap",
+      "state": "correct",
+      "width": 1280,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "tokens",
+      "state": "unanswered",
+      "width": 320,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "tokens",
+      "state": "unanswered",
+      "width": 390,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "tokens",
+      "state": "unanswered",
+      "width": 768,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "tokens",
+      "state": "unanswered",
+      "width": 1280,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "tokens",
+      "state": "wrong",
+      "width": 320,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "tokens",
+      "state": "wrong",
+      "width": 390,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "tokens",
+      "state": "wrong",
+      "width": 768,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "tokens",
+      "state": "wrong",
+      "width": 1280,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "tokens",
+      "state": "correct",
+      "width": 320,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "tokens",
+      "state": "correct",
+      "width": 390,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "tokens",
+      "state": "correct",
+      "width": 768,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "tokens",
+      "state": "correct",
+      "width": 1280,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "match",
+      "state": "checkpoint",
+      "width": 320,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "match",
+      "state": "checkpoint",
+      "width": 390,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "match",
+      "state": "checkpoint",
+      "width": 768,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "match",
+      "state": "checkpoint",
+      "width": 1280,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "done",
+      "state": "unit-complete",
+      "width": 320,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "done",
+      "state": "unit-complete",
+      "width": 390,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "done",
+      "state": "unit-complete",
+      "width": 768,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "done",
+      "state": "unit-complete",
+      "width": 1280,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "theory",
+      "state": "text",
+      "width": 320,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "theory",
+      "state": "text",
+      "width": 390,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "theory",
+      "state": "text",
+      "width": 768,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "theory",
+      "state": "text",
+      "width": 1280,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "theory",
+      "state": "code",
+      "width": 320,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "theory",
+      "state": "code",
+      "width": 390,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "theory",
+      "state": "code",
+      "width": 768,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "theory",
+      "state": "code",
+      "width": 1280,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "match",
+      "state": "wrong-pair",
+      "width": 320,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "match",
+      "state": "wrong-pair",
+      "width": 390,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "match",
+      "state": "wrong-pair",
+      "width": 768,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "match",
+      "state": "wrong-pair",
+      "width": 1280,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "match",
+      "state": "correct-pair",
+      "width": 320,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "match",
+      "state": "correct-pair",
+      "width": 390,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "match",
+      "state": "correct-pair",
+      "width": 768,
+      "overflow": false,
+      "controlsFit": true
+    },
+    {
+      "mode": "match",
+      "state": "correct-pair",
+      "width": 1280,
+      "overflow": false,
+      "controlsFit": true
+    }
+  ]
+}

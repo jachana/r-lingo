@@ -1,4 +1,4 @@
-import { type CSSProperties, useEffect, useMemo, useState } from 'react'
+import { type CSSProperties, useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import {
   BarChart3,
   BadgeCheck,
@@ -8,7 +8,6 @@ import {
   ExternalLink,
   Flame,
   FlaskConical,
-  Heart,
   Lock,
   Medal,
   Play,
@@ -19,8 +18,6 @@ import {
 import './App.css'
 
 import {
-  type Challenge,
-  getChallengeKey,
   getLessonChallenges,
   lessons,
   lessonSupport,
@@ -30,20 +27,15 @@ import { FeedbackCard } from './components/FeedbackCard'
 import { MatchBoard } from './components/MatchBoard'
 import { TokenBank } from './components/TokenBank'
 import { WriteCard } from './components/WriteCard'
-import { checkTypedAnswer, type CheckResult } from './lib/checkAnswer'
-import { pickMode, type ChallengeMode } from './lib/pickMode'
-import { advanceQueue, buildQueue, requeueFailed, shouldReveal, type QueueItem } from './lib/sessionQueue'
+import { activeLessonId, activeRun, allChallenges, challengeById, currentMode, evaluateAnswer, lessonFor, matchingPairs, transition, unlockedIndex } from './lib/learningSession'
+import { importProgress, loadProgress, saveProgress } from './lib/progressStorage'
 import { seededShuffle } from './lib/shuffle'
+import { concepts, dayStreak, dueReview, localDay } from './lib/dailyLearning'
 
 const iconMap = {
   play: Play,
   flask: FlaskConical,
   chart: BarChart3,
-}
-
-function getExpectedAnswers(target: Challenge, mode: ChallengeMode): string[] {
-  if (mode === 'gap' && target.gap) return [target.gap.blank, ...(target.gap.acceptedBlanks ?? [])]
-  return [target.answer, ...(target.acceptedAnswers ?? [])]
 }
 
 function playFeedbackSound(kind: 'correct' | 'wrong' | 'unit') {
@@ -67,193 +59,93 @@ function playFeedbackSound(kind: 'correct' | 'wrong' | 'unit') {
       oscillator.start(audioContext.currentTime + index * 0.09)
       oscillator.stop(audioContext.currentTime + index * 0.09 + 0.12)
     })
+    window.setTimeout(() => { void audioContext.close() }, 700)
   } catch {
     // Audio feedback is a bonus; browsers can block it without affecting learning.
   }
 }
 
-type StoredProgress = {
-  lessonIndex: number
-  challengeIndex: number
-  hearts: number
-  streak: number
-  completedCorrect: string[]
-  completedLessons: number[]
-  xp: number
+const learningHints: Record<string, string> = {
+  'r-basics': 'Piensa si quieres guardar un valor, comparar valores o explicar un paso. Son tareas distintas.',
+  vectors: 'Revisa el tipo de cada elemento y qué pide el enunciado: texto, números o un valor lógico.',
+  tables: 'Distingue filas de columnas. ¿Necesitas conocer la estructura o mirar registros individuales?',
+  cleaning: 'Busca primero valores ausentes y duplicados. Decide qué información quieres conservar.',
+  filtering: 'Expresa el criterio en palabras y revisa si debe cumplirse una condición o varias.',
+  indicators: 'Identifica el numerador, el denominador y la unidad del indicador antes de calcular.',
+  plots: 'Elige qué variable va en cada eje y si quieres mostrar grupos, puntos o una tendencia.',
+  dates: 'Observa el orden de año, mes y día y si necesitas una fecha o una agrupación semanal.',
+  export: 'Revisa el tipo de resultado, la ruta y si el nombre del archivo está escrito como texto.',
 }
-
-const progressStorageKey = 'r-lingo-progress-v2'
-
-function getTheoryPages(lesson: (typeof lessons)[number], support: (typeof lessonSupport)[string]) {
+function getTheoryPages(lesson: (typeof lessons)[number], support: (typeof lessonSupport)[string], challenge: (typeof allChallenges)[number]) {
   return [
-    {
-      eyebrow: 'Qué es',
-      title: lesson.title,
-      body:
-        `${lesson.theory.why} En simple: esta unidad te enseña una herramienta pequeña de R para que una pregunta de salud pública quede escrita como pasos claros, no como memoria o intuición.`,
-      bullets: support.keyIdeas.slice(0, 2),
-    },
-    {
-      eyebrow: 'Cuándo y por qué',
-      title: 'Cuándo usarlo',
-      body:
-        'Úsalo cuando quieras que otra persona pueda revisar tu análisis, repetirlo o entender por qué tomaste una decisión. En investigación, eso importa tanto como llegar al número final.',
-      bullets: lesson.theory.canDo,
-    },
-    {
-      eyebrow: 'Dónde aparece',
-      title: 'Dónde lo verás en datos reales',
-      body:
-        'Aparece en bases de vigilancia, encuestas, laboratorios, reportes comunales y tableros. Normalmente lo usarás al preparar datos antes de calcular tasas, filtrar casos o crear gráficos.',
-      bullets: support.tips.slice(0, 3),
-    },
-    {
-      eyebrow: 'Cómo se usa',
-      title: 'Cómo se ve en R',
-      body:
-        'No necesitas memorizar todo. Mira el patrón general: nombre de objeto, función, paréntesis, argumentos y comentarios. La práctica después te pide reconocer o completar estas piezas.',
-      code: support.script,
-    },
-    {
-      eyebrow: 'Ejemplo',
-      title: 'Ejemplo en salud pública',
-      body: lesson.theory.example,
-      bullets: support.keyIdeas.slice(2),
-    },
-    {
-      eyebrow: 'Antes de practicar',
-      title: 'Lo mínimo para responder',
-      body:
-        'Las preguntas salen de estas ideas. Si algo parece aparecer de la nada, vuelve a esta página y busca la palabra clave: función, objeto, filtro, fecha, porcentaje o gráfico.',
-      bullets: [...support.keyIdeas.slice(0, 4), ...support.tips.slice(0, 2)],
-    },
+    { eyebrow: 'Idea clave', title: lesson.title, body: lesson.theory.why, bullets: support.keyIdeas },
+    { eyebrow: 'Lo que podrás hacer', title: lesson.goal, body: lesson.theory.example, bullets: lesson.theory.canDo },
+    { eyebrow: 'Paso a paso', title: 'Un script para probar en RStudio', body: support.tips[0], code: support.script },
+    { eyebrow: 'Errores frecuentes', title: 'Qué revisar antes de continuar', body: learningHints[lesson.id], bullets: support.tips },
+    { eyebrow: 'Aplicación', title: 'Del ejemplo a tus datos', body: lesson.theory.example, bullets: support.keyIdeas.slice(-2) },
+    { eyebrow: 'Repasar concepto', title: challenge.concept, body: challenge.explain, code: challenge.code ?? challenge.answer },
   ]
 }
 
-function getFreshProgress(): StoredProgress {
-  return { lessonIndex: 0, challengeIndex: 0, hearts: 5, streak: 0, completedCorrect: [], completedLessons: [], xp: 0 }
-}
-
-function getCompletedLessonsFromAnswers(completedCorrect: string[]) {
-  return lessons.reduce<number[]>((completed, lesson, lessonIndex) => {
-    const lessonDone = getLessonChallenges(lesson).every((_, challengeIndex) =>
-      completedCorrect.includes(getChallengeKey(lessonIndex, challengeIndex)),
-    )
-    return lessonDone ? [...completed, lessonIndex] : completed
-  }, [])
-}
-
-function getUnlockedLessonIndex(completedLessons: number[]) {
-  const completedSet = new Set(completedLessons)
-  const firstLocked = lessons.findIndex((_, index) => !completedSet.has(index))
-  return firstLocked === -1 ? lessons.length - 1 : firstLocked
-}
-
-function getInitialPhase(lessonIndex: number, completedCorrect: string[], completedLessons: number[]): 'practice' | 'match' | 'done' {
-  const queue = buildQueue(lessonIndex, getLessonChallenges(lessons[lessonIndex]).length, completedCorrect)
-  if (queue.length > 0) return 'practice'
-  return completedLessons.includes(lessonIndex) ? 'done' : 'match'
-}
-
-function readStoredProgress(): StoredProgress {
-  if (typeof window === 'undefined') return getFreshProgress()
-
-  try {
-    const stored = window.localStorage.getItem(progressStorageKey)
-    if (!stored) return getFreshProgress()
-
-    const parsed = JSON.parse(stored) as Partial<StoredProgress>
-    const storedLessonIndex = Math.min(Math.max(parsed.lessonIndex ?? 0, 0), lessons.length - 1)
-    const storedCompletedLessons = Array.isArray(parsed.completedLessons) ? parsed.completedLessons : undefined
-    const completedLessons = [
-      ...new Set(
-        (storedCompletedLessons ?? getCompletedLessonsFromAnswers(Array.isArray(parsed.completedCorrect) ? parsed.completedCorrect : [])).filter(
-          (index) => Number.isInteger(index) && index >= 0 && index < lessons.length,
-        ),
-      ),
-    ]
-    const safeLessonIndex = Math.min(storedLessonIndex, getUnlockedLessonIndex(completedLessons))
-    const safeLesson = lessons[safeLessonIndex]
-    const completedCorrect = Array.isArray(parsed.completedCorrect) ? parsed.completedCorrect : []
-    const safeChallengeIndex = Math.min(Math.max(parsed.challengeIndex ?? 0, 0), getLessonChallenges(safeLesson).length - 1)
-    const queue = buildQueue(safeLessonIndex, getLessonChallenges(safeLesson).length, completedCorrect)
-    const resumeChallengeIndex = completedCorrect.includes(getChallengeKey(safeLessonIndex, safeChallengeIndex))
-      ? (queue[0]?.challengeIndex ?? 0)
-      : safeChallengeIndex
-
-    return {
-      lessonIndex: safeLessonIndex,
-      challengeIndex: resumeChallengeIndex,
-      hearts: Math.min(Math.max(parsed.hearts ?? 5, 0), 5),
-      streak: Math.max(parsed.streak ?? 0, 0),
-      completedCorrect,
-      completedLessons,
-      xp: Math.max(parsed.xp ?? completedCorrect.length * 20, 0),
-    }
-  } catch {
-    return getFreshProgress()
-  }
-}
-
 function App() {
-  const [initialProgress] = useState(readStoredProgress)
-  const [lessonIndex, setLessonIndex] = useState(initialProgress.lessonIndex)
-  const [queue, setQueue] = useState<QueueItem[]>(() =>
-    buildQueue(
-      initialProgress.lessonIndex,
-      getLessonChallenges(lessons[initialProgress.lessonIndex]).length,
-      initialProgress.completedCorrect,
-    ),
-  )
-  const [phase, setPhase] = useState<'practice' | 'match' | 'done'>(() =>
-    getInitialPhase(initialProgress.lessonIndex, initialProgress.completedCorrect, initialProgress.completedLessons),
-  )
-  const [selected, setSelected] = useState('')
-  const [checked, setChecked] = useState(false)
-  const [checkResult, setCheckResult] = useState<CheckResult>({ correct: false })
-  const [completedCorrect, setCompletedCorrect] = useState(initialProgress.completedCorrect)
-  const [completedLessons, setCompletedLessons] = useState(initialProgress.completedLessons)
-  const [hearts, setHearts] = useState(initialProgress.hearts)
-  const [streak, setStreak] = useState(initialProgress.streak)
-  const [xp, setXp] = useState(initialProgress.xp)
+  const [initial] = useState(() => loadProgress(() => window.localStorage))
+  const [state, dispatch] = useReducer(transition, initial.progress)
+  const [storageWarning, setStorageWarning] = useState(initial.warning)
+  const [savingEnabled, setSavingEnabled] = useState(initial.warning === null)
   const [celebration, setCelebration] = useState<'correct' | 'level' | 'unit' | null>(null)
-  const [showTheory, setShowTheory] = useState(true)
-  const [theoryPageIndex, setTheoryPageIndex] = useState(0)
-
-  const lesson = lessons[lessonIndex]
+  const [celebrationTitle, setCelebrationTitle] = useState('')
+  const [resetPending, setResetPending] = useState(false)
+  const [importText, setImportText] = useState('')
+  const [importMessage, setImportMessage] = useState('')
+  const [replacementProgress, setReplacementProgress] = useState<typeof state | null>(null)
+  const headingRef = useRef<HTMLHeadingElement>(null)
+  const [today, setToday] = useState(() => localDay(new Date()))
+  const run = activeRun(state)
+  const activeId = activeLessonId(state)
+  const { phase, selected, showTheory, theoryPageIndex } = run
+  const { completedCorrect, xp, streak } = state
+  const checked = run.result !== null
+  const checkResult = run.result ?? { correct: false }
+  const lesson = lessonFor(activeId)
+  const lessonIndex = lessons.findIndex((item) => item.id === activeId)
   const lessonChallenges = getLessonChallenges(lesson)
+  const currentItem = run.queue[0]
+  const challenge = challengeById.get(currentItem?.challengeId) ?? lessonChallenges[0]
+  const challengeKey = challenge.id
+  const challengeIndex = lessonChallenges.findIndex((item) => item.id === challengeKey)
+  const challengeMode = currentMode(run)
+  const revealOnWrong = (currentItem?.attempts ?? 0) >= 1
   const support = lessonSupport[lesson.title]
-  const theoryPages = getTheoryPages(lesson, support)
+  const theoryPages = getTheoryPages(lesson, support, challenge)
   const theoryPage = theoryPages[theoryPageIndex] ?? theoryPages[0]
   const theoryProgress = ((theoryPageIndex + 1) / theoryPages.length) * 100
-  const currentItem = queue[0]
-  const challengeIndex = currentItem?.challengeIndex ?? 0
-  const challenge = lessonChallenges[challengeIndex]
-  const challengeKey = getChallengeKey(lessonIndex, challengeIndex)
-  const challengeMode = currentItem
-    ? pickMode(challenge, `${challengeKey}-a${currentItem.attempts}`, currentItem.failedModes.at(-1))
-    : 'choice'
-  const revealOnWrong = currentItem ? shouldReveal(currentItem) : false
-  const shuffledChoices = useMemo(
-    () => seededShuffle(challenge.choices, `${challengeKey}-${challenge.answer}`),
-    [challenge.choices, challenge.answer, challengeKey],
-  )
+  const shuffledChoices = useMemo(() => seededShuffle(challenge.choices, challengeKey), [challenge.choices, challengeKey])
   const isCorrect = checkResult.correct
-  const totalChallenges = lessons.reduce((sum, item) => sum + getLessonChallenges(item).length, 0)
-  const progress = (completedCorrect.length / totalChallenges) * 100
+  const totalChallenges = allChallenges.length
+  const progress = completedCorrect.length / totalChallenges * 100
+  const lessonScore = Math.round(progress)
   const level = Math.floor(xp / 100) + 1
   const levelProgress = xp % 100
-  const unlockedLessonIndex = getUnlockedLessonIndex(completedLessons)
-
-  const lessonScore = useMemo(() => {
-    return Math.round((completedCorrect.length / totalChallenges) * 100)
-  }, [completedCorrect.length, totalChallenges])
+  const unlockedLessonIndex = unlockedIndex(state.completedLessons)
+  const todayCount = state.dailyHistory[today]?.length ?? 0
+  const calendarStreak = dayStreak(state.dailyHistory, today)
+  const dueConcepts = dueReview(state.reviewMetrics, today, lessons.slice(0, unlockedLessonIndex + 1).map((item) => item.id))
+  const setSelected = (value: string) => dispatch({ type: 'select', value })
+  const setShowTheory = (visible: boolean) => dispatch({ type: 'theory', visible })
+  const restart = () => setResetPending(true)
 
   useEffect(() => {
-    const progressToStore: StoredProgress = { lessonIndex, challengeIndex: queue[0]?.challengeIndex ?? 0, hearts, streak, completedCorrect, completedLessons, xp }
-    window.localStorage.setItem(progressStorageKey, JSON.stringify(progressToStore))
-  }, [lessonIndex, queue, hearts, streak, completedCorrect, completedLessons, xp])
-
+    if (savingEnabled) setStorageWarning(saveProgress(state, () => window.localStorage))
+  }, [state, savingEnabled])
+  useEffect(() => {
+    const refresh = () => setToday(localDay(new Date()))
+    const timer = window.setInterval(refresh, 15000)
+    document.addEventListener('visibilitychange', refresh)
+    return () => { window.clearInterval(timer); document.removeEventListener('visibilitychange', refresh) }
+  }, [])
+  useEffect(() => {
+    if (!showTheory) headingRef.current?.focus()
+  }, [challengeKey, phase, showTheory])
   useEffect(() => {
     if (!celebration) return
     const timeout = window.setTimeout(() => setCelebration(null), celebration === 'unit' ? 2600 : 1600)
@@ -261,91 +153,49 @@ function App() {
   }, [celebration])
 
   function checkAnswer() {
-    if (!currentItem) return
-    if (!selected.trim()) return
-    const result =
-      challengeMode === 'choice'
-        ? { correct: selected === challenge.answer }
-        : checkTypedAnswer(selected, getExpectedAnswers(challenge, challengeMode))
-    setCheckResult(result)
-    setChecked(true)
+    if (checked || !selected.trim() || !currentItem) return
+    const result = evaluateAnswer(run)
+    dispatch({ type: 'check', day: localDay(new Date()) })
+    if (state.sound) playFeedbackSound(result.correct ? 'correct' : 'wrong')
     if (result.correct) {
-      const isNewCompletion = !completedCorrect.includes(challengeKey)
-      setCompletedCorrect((completed) => {
-        if (completed.includes(challengeKey)) return completed
-        return [...completed, challengeKey]
-      })
-      setStreak((count) => count + 1)
-      playFeedbackSound('correct')
-      if (isNewCompletion) {
-        setXp((currentXp) => {
-          const nextXp = currentXp + 20
-          setCelebration(nextXp % 100 < currentXp % 100 ? 'level' : 'correct')
-          return nextXp
-        })
-      } else {
-        setCelebration('correct')
-      }
-    } else {
-      playFeedbackSound('wrong')
-      setHearts((count) => Math.max(0, count - 1))
-      setStreak(0)
+      const earnsXp = run.kind === 'learn' && !completedCorrect.includes(challengeKey)
+      setCelebrationTitle(earnsXp ? '+20 XP' : 'Repaso correcto')
+      setCelebration(earnsXp && (xp + 20) % 100 === 0 ? 'level' : 'correct')
     }
   }
-
-  function continueSession() {
-    const nextQueue = checkResult.correct ? advanceQueue(queue) : requeueFailed(queue, challengeMode)
-    setQueue(nextQueue)
-    if (nextQueue.length === 0) setPhase('match')
-    setSelected('')
-    setChecked(false)
-    setCheckResult({ correct: false })
-  }
-
-  function advanceLesson() {
-    if (lessonIndex < lessons.length - 1) {
-      const nextLessonIndex = lessonIndex + 1
-      const nextQueue = buildQueue(nextLessonIndex, getLessonChallenges(lessons[nextLessonIndex]).length, completedCorrect)
-      setLessonIndex(nextLessonIndex)
-      setQueue(nextQueue)
-      setPhase(nextQueue.length === 0 ? 'done' : 'practice')
-      setShowTheory(true)
-      setTheoryPageIndex(0)
-    } else {
-      setPhase('done')
+  function matchPair(left: string, right: string) {
+    const next = transition(state, { type: 'match', left, right })
+    dispatch({ type: 'match', left, right })
+    if (activeRun(next).phase === 'done' && phase !== 'done') {
+      setCelebrationTitle(lesson.title)
+      setCelebration('unit')
+      if (state.sound) playFeedbackSound('unit')
     }
-    setSelected('')
-    setChecked(false)
-    setCheckResult({ correct: false })
   }
-
-  function finishMatch() {
-    setCompletedLessons((completed) => (completed.includes(lessonIndex) ? completed : [...completed, lessonIndex]))
-    setXp((currentXp) => currentXp + 20)
-    playFeedbackSound('unit')
-    setCelebration('unit')
-    advanceLesson()
+  function exportProgress() {
+    const url = URL.createObjectURL(new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' }))
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'r-lingo-progreso.json'
+    link.click()
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
-
-  function restart() {
-    setLessonIndex(0)
-    setQueue(buildQueue(0, getLessonChallenges(lessons[0]).length, []))
-    setPhase('practice')
-    setSelected('')
-    setChecked(false)
-    setCheckResult({ correct: false })
-    setCompletedCorrect([])
-    setCompletedLessons([])
-    setHearts(5)
-    setStreak(0)
-    setXp(0)
-    setCelebration(null)
-    setShowTheory(true)
-    setTheoryPageIndex(0)
+  function prepareImport() {
+    try { setReplacementProgress(importProgress(importText)); setImportMessage('Copia válida. Confirma para reemplazar el progreso de este navegador.') }
+    catch { setImportMessage('Archivo incompatible o inválido. El progreso actual no cambió.'); setReplacementProgress(null) }
   }
 
   return (
     <main className="app-shell">
+      <a className="skip-link" href="#practice">Ir a la práctica</a>
+      {storageWarning && <p className="feedback try-again" role="status">{storageWarning}</p>}
+      {resetPending && <section className="feedback try-again" role="alertdialog" aria-modal="false" aria-labelledby="reset-title">
+        <h2 id="reset-title">¿Reiniciar todo el curso?</h2>
+        <p>Se borrarán los logros de este navegador. Exporta una copia si quieres recuperarlos después.</p>
+        <div className="actions"><button className="secondary" onClick={exportProgress} type="button">Exportar antes de reiniciar</button>
+          <button className="secondary" onClick={() => setResetPending(false)} type="button">Cancelar</button>
+          <button className="primary" onClick={() => { dispatch({ type: 'reset' }); setSavingEnabled(true); setResetPending(false); setCelebration(null) }} type="button">Confirmar reinicio</button></div>
+      </section>}
       {celebration && (
         <div className={`celebration ${celebration}`} aria-live="polite">
           <div className="confetti" aria-hidden="true">
@@ -355,10 +205,10 @@ function App() {
           </div>
           <div className="celebration-card">
             {celebration === 'level' || celebration === 'unit' ? <Trophy size={42} aria-hidden="true" /> : <Sparkles size={42} aria-hidden="true" />}
-            <strong>{celebration === 'unit' ? 'Unidad lista!' : celebration === 'level' ? `Nivel ${level}!` : '+20 XP'}</strong>
+            <strong>{celebration === 'unit' ? 'Unidad lista!' : celebration === 'level' ? `Nivel ${level}!` : celebrationTitle}</strong>
             <span>
               {celebration === 'unit'
-                ? `${lesson.title} completada`
+                ? `${celebrationTitle} completada`
                 : celebration === 'level'
                   ? 'Nuevo nivel de análisis desbloqueado.'
                   : streak > 1
@@ -375,11 +225,8 @@ function App() {
           <h1>Aprende R con ejemplos de salud pública.</h1>
         </div>
         <div className="stats">
-          <span title="Vidas">
-            <Heart size={18} aria-hidden="true" /> {hearts}
-          </span>
-          <span title="Racha">
-            <Flame size={18} aria-hidden="true" /> {streak}
+          <span title="Respuestas correctas consecutivas">
+            <Flame size={18} aria-hidden="true" /> {streak} seguidas
           </span>
           <span title="Logro">
             <Trophy size={18} aria-hidden="true" /> {lessonScore}%
@@ -390,7 +237,7 @@ function App() {
         </div>
       </section>
 
-      <div className="progress-track" aria-label="Avance del curso">
+      <div className="progress-track" role="progressbar" aria-valuemin={0} aria-valuemax={totalChallenges} aria-valuenow={completedCorrect.length} aria-label="Avance del curso">
         <div style={{ width: `${progress}%` }} />
       </div>
 
@@ -399,7 +246,7 @@ function App() {
           <BadgeCheck size={20} aria-hidden="true" />
           <span>Nivel {level}</span>
         </div>
-        <div className="level-track">
+        <div className="level-track" role="progressbar" aria-label="Avance del nivel" aria-valuemin={0} aria-valuemax={100} aria-valuenow={levelProgress}>
           <div style={{ width: `${levelProgress}%` }} />
         </div>
         <strong>
@@ -412,7 +259,7 @@ function App() {
           {lessons.map((item, index) => {
             const Icon = iconMap[item.icon]
             const active = index === lessonIndex
-            const complete = completedLessons.includes(index)
+            const complete = state.completedLessons.includes(item.id)
             const locked = index > unlockedLessonIndex
             return (
               <button
@@ -420,18 +267,7 @@ function App() {
                 className={`lesson-node ${active ? 'active' : ''} ${complete ? 'complete' : ''} ${locked ? 'locked' : ''}`}
                 disabled={locked}
                 key={item.title}
-                onClick={() => {
-                  if (locked) return
-                  const nextQueue = buildQueue(index, getLessonChallenges(lessons[index]).length, completedCorrect)
-                  setLessonIndex(index)
-                  setQueue(nextQueue)
-                  setPhase(getInitialPhase(index, completedCorrect, completedLessons))
-                  setSelected('')
-                  setChecked(false)
-                  setCheckResult({ correct: false })
-                  setShowTheory(true)
-                  setTheoryPageIndex(0)
-                }}
+                onClick={() => dispatch({ type: 'navigate', lessonId: item.id })}
                 type="button"
               >
                 <span className="lesson-icon">
@@ -446,10 +282,10 @@ function App() {
           })}
         </aside>
 
-        <section className="challenge-panel" aria-live="polite">
+        <section className="challenge-panel" id="practice" aria-label="Práctica de R">
           <div className="lesson-meta">
             <span>{lesson.tag}</span>
-            <button className="theory-toggle" onClick={() => setShowTheory((visible) => !visible)} type="button">
+            <button className="theory-toggle" onClick={() => setShowTheory(!showTheory)} type="button">
               <BookOpen size={17} aria-hidden="true" />
               {showTheory ? 'Practicar' : 'Leer unidad'}
             </button>
@@ -469,7 +305,7 @@ function App() {
                   {theoryPageIndex + 1} de {theoryPages.length}
                 </span>
               </div>
-              <div className="theory-page-track" aria-label="Progreso de lectura de la unidad">
+              <div className="theory-page-track" role="progressbar" aria-valuemin={0} aria-valuemax={theoryPages.length} aria-valuenow={theoryPageIndex + 1} aria-label="Progreso de lectura de la unidad">
                 <div style={{ width: `${theoryProgress}%` }} />
               </div>
               <p className="context theory-body">{theoryPage.body}</p>
@@ -498,7 +334,7 @@ function App() {
                       <strong>{doc.label}</strong>
                       <span>{doc.summary}</span>
                       <a href={doc.url} rel="noreferrer" target="_blank">
-                        Fuente original
+                        Fuente original (requiere internet)
                         <ExternalLink size={15} aria-hidden="true" />
                       </a>
                     </article>
@@ -511,11 +347,11 @@ function App() {
                   Reiniciar
                 </button>
                 <div className="theory-nav">
-                  <button className="secondary" disabled={theoryPageIndex === 0} onClick={() => setTheoryPageIndex((page) => Math.max(0, page - 1))} type="button">
+                  <button className="secondary" disabled={theoryPageIndex === 0} onClick={() => dispatch({ type: 'theoryPage', page: theoryPageIndex - 1 })} type="button">
                     Atrás
                   </button>
                   {theoryPageIndex < theoryPages.length - 1 ? (
-                    <button className="primary" onClick={() => setTheoryPageIndex((page) => Math.min(theoryPages.length - 1, page + 1))} type="button">
+                    <button className="primary" onClick={() => dispatch({ type: 'theoryPage', page: theoryPageIndex + 1 })} type="button">
                       Siguiente
                       <ChevronRight size={18} aria-hidden="true" />
                     </button>
@@ -533,7 +369,7 @@ function App() {
               <div className="question-count">
                 {challengeIndex + 1} de {lessonChallenges.length}
               </div>
-              <h2>{challenge.prompt}</h2>
+              <h2 ref={headingRef} tabIndex={-1}>{challenge.prompt}</h2>
               <p className="context">{challenge.context}</p>
 
               {challenge.code && (
@@ -545,6 +381,7 @@ function App() {
               {challengeMode === 'choice' ? (
                 <ChoiceList
                   answer={challenge.answer}
+                  revealAnswer={revealOnWrong}
                   checked={checked}
                   choices={shuffledChoices}
                   disabled={checked}
@@ -557,8 +394,9 @@ function App() {
                   correct={isCorrect}
                   disabled={checked}
                   distractors={challenge.tokens.distractors}
-                  key={challengeKey}
-                  onChange={setSelected}
+                  key={`${challengeKey}-${currentItem?.attempts}`}
+                  onChange={(value, tokenIds) => dispatch({ type: 'select', value, tokenIds })}
+                  placedIds={run.tokenIds}
                   parts={challenge.tokens.parts}
                   seed={challengeKey}
                 />
@@ -568,7 +406,7 @@ function App() {
                   correct={isCorrect}
                   disabled={checked}
                   gapTemplate={challenge.gap?.template}
-                  hint={checkResult.hint}
+                  hint={revealOnWrong ? checkResult.hint : undefined}
                   mode={challengeMode === 'gap' ? 'gap' : 'write'}
                   onChange={setSelected}
                   revealedAnswer={checked && !isCorrect && revealOnWrong ? (challengeMode === 'gap' ? challenge.gap?.blank : challenge.answer) : undefined}
@@ -581,8 +419,10 @@ function App() {
                   concept={challenge.concept}
                   correct={isCorrect}
                   explain={challenge.explain}
-                  hint={checkResult.hint}
-                  onReviewConcept={() => setShowTheory(true)}
+                  learningHint={learningHints[lesson.id]}
+                  revealExplanation={revealOnWrong}
+                  hint={revealOnWrong ? checkResult.hint : undefined}
+                  onReviewConcept={() => dispatch({ type: 'theory', visible: true, page: 5 })}
                   revealedAnswer={checked && !isCorrect && revealOnWrong ? (challengeMode === 'gap' ? challenge.gap?.blank : challenge.answer) : undefined}
                 />
               )}
@@ -593,7 +433,7 @@ function App() {
                   Reiniciar
                 </button>
                 {checked ? (
-                  <button className="primary" onClick={continueSession} type="button">
+                  <button className="primary" onClick={() => dispatch({ type: 'continue' })} type="button">
                     Continuar
                     <ChevronRight size={18} aria-hidden="true" />
                   </button>
@@ -607,13 +447,14 @@ function App() {
             </>
           ) : phase === 'match' ? (
             <>
-              <h2>Repaso: {lesson.title}</h2>
+              <h2 ref={headingRef} tabIndex={-1}>Repaso: {lesson.title}</h2>
               <p className="context">Última prueba antes de cerrar la unidad.</p>
               <MatchBoard
-                key={lessonIndex}
-                onComplete={finishMatch}
-                pairs={seededShuffle(lesson.matchPairs, `match-${lessonIndex}`).slice(0, 4)}
-                seed={`match-${lessonIndex}`}
+                key={activeId}
+                matchedLefts={run.matchedLefts}
+                onMatch={matchPair}
+                pairs={matchingPairs(activeId)}
+                seed={`match-${activeId}`}
               />
               <div className="actions">
                 <button className="secondary" onClick={restart} type="button">
@@ -624,17 +465,21 @@ function App() {
             </>
           ) : (
             <>
-              <h2>Unidad completa</h2>
+              <h2 ref={headingRef} tabIndex={-1}>{run.kind === 'review' ? 'Repaso completo' : state.completedLessons.length === lessons.length ? 'Curso completo' : 'Unidad completa'}</h2>
               <p className="context">Ya no quedan preguntas pendientes en esta unidad.</p>
               <div className="feedback good">
                 <strong>Buen trabajo.</strong>
-                <span>Tu progreso quedó guardado en este dispositivo.</span>
+                <span>{storageWarning ? 'Exporta una copia para conservar tu progreso.' : 'Tu progreso quedó guardado en este dispositivo.'}</span>
               </div>
               <div className="actions">
                 <button className="secondary" onClick={restart} type="button">
                   <RotateCcw size={18} aria-hidden="true" />
                   Reiniciar curso
                 </button>
+                {state.reviewActive ? <button className="primary" onClick={() => dispatch({ type: 'returnToCourse' })} type="button">Volver al curso</button> : <>
+                  <button className="primary" onClick={() => dispatch({ type: 'replay' })} type="button">Practicar de nuevo</button>
+                  {lessonIndex < lessons.length - 1 && <button className="primary" onClick={() => dispatch({ type: 'navigate', lessonId: lessons[lessonIndex + 1].id })} type="button">Siguiente unidad</button>}
+                </>}
               </div>
             </>
           )}
@@ -645,16 +490,38 @@ function App() {
             <Sparkles size={20} aria-hidden="true" />
             <div>
               <strong>Meta de hoy</strong>
-              <span>Lee una unidad, responde sus ejercicios y prueba los comandos en RStudio.</span>
+              <span>{todayCount} de {state.dailyGoal} ejercicios correctos · {calendarStreak} días de racha</span>
+              <span>{todayCount >= state.dailyGoal ? '¡Meta alcanzada!' : 'Cada ejercicio cuenta una vez al día, también durante el repaso.'}</span>
             </div>
           </div>
+          <label className="goal-choice">Ejercicios por día <select value={state.dailyGoal} onChange={(event) => dispatch({ type: 'dailyGoal', target: Number(event.target.value) })}>
+            {[5, 10, 15].map((target) => <option value={target} key={target}>{target}</option>)}
+          </select></label>
+          <p className="learning-rules">Practica sin límite. Los errores vuelven a la cola. Un día con una respuesta correcta mantiene la racha diaria según la fecha local.</p>
+          {(dueConcepts.length > 0 || state.dailyReview?.run.phase !== 'done' && state.dailyReview !== null) && <button className="secondary" onClick={() => dispatch({ type: 'startReview', day: today })} type="button">{state.dailyReview && state.dailyReview.run.phase !== 'done' ? 'Continuar repaso pendiente' : `Repasar ${dueConcepts.length} conceptos pendientes`}</button>}
+          {state.reviewActive && phase !== 'done' && <button className="secondary" onClick={() => dispatch({ type: 'returnToCourse' })} type="button">Volver al curso</button>}
+          <details className="concept-progress"><summary>Conceptos para repasar</summary>
+            <p>Sesiones de hasta cinco conceptos. Tras acertar en días distintos, el repaso pasa de 1 a 3, 7 y 14 días; un error vuelve a 1 día.</p>
+            <ul>{Object.entries(state.reviewMetrics).sort(([, a], [, b]) => b.failures - a.failures).map(([key, metric]) => <li key={key}>
+              <strong>{concepts.get(metric.challengeId)!.label}</strong><span>{metric.failures} errores · próximo repaso {metric.dueDay}</span>
+            </li>)}</ul>
+          </details>
           <h3>Mapa rápido de R</h3>
+          <details className="practical-assignment">
+            <summary>Práctica independiente en RStudio</summary>
+            <p>Usa datos ficticios para crear una tabla y un gráfico. Guarda tu intento antes de abrir la solución.</p>
+            <a href="/practica/guia.md" download>Guía y rúbrica</a>
+            <a href="/practica/vigilancia.csv" download>Datos de vigilancia (CSV)</a>
+            <a href="/practica/poblaciones.csv" download>Poblaciones ficticias (CSV)</a>
+            <a href="/practica/inicio.R" download>Script inicial</a>
+            <details><summary>Solución: ver después de intentar</summary><a href="/practica/solucion.R" download>Solución comentada</a></details>
+          </details>
           <ul>
             <li>
               <code>read.csv()</code>
               <span>Carga un CSV de vigilancia, encuesta o laboratorio como tabla.</span>
               <a href="https://stat.ethz.ch/R-manual/R-devel/library/utils/html/read.table.html" rel="noreferrer" target="_blank">
-                Fuente
+                Fuente (requiere internet)
                 <ExternalLink size={13} aria-hidden="true" />
               </a>
             </li>
@@ -662,7 +529,7 @@ function App() {
               <code>summary()</code>
               <span>Resume rangos, frecuencias y posibles valores raros.</span>
               <a href="https://stat.ethz.ch/R-manual/R-devel/library/base/html/summary.html" rel="noreferrer" target="_blank">
-                Fuente
+                Fuente (requiere internet)
                 <ExternalLink size={13} aria-hidden="true" />
               </a>
             </li>
@@ -670,7 +537,7 @@ function App() {
               <code>filter()</code>
               <span>Deja solo filas que cumplen criterios, como confirmados o una comuna.</span>
               <a href="https://dplyr.tidyverse.org/reference/filter.html" rel="noreferrer" target="_blank">
-                Fuente
+                Fuente (requiere internet)
                 <ExternalLink size={13} aria-hidden="true" />
               </a>
             </li>
@@ -678,13 +545,30 @@ function App() {
               <code>ggplot()</code>
               <span>Inicia gráficos para tendencias, grupos o comparación territorial.</span>
               <a href="https://ggplot2.tidyverse.org/reference/ggplot.html" rel="noreferrer" target="_blank">
-                Fuente
+                Fuente (requiere internet)
                 <ExternalLink size={13} aria-hidden="true" />
               </a>
             </li>
           </ul>
         </aside>
       </section>
+      <details className="backup-panel">
+        <summary>Guardar o recuperar una copia de progreso</summary>
+        <label><input type="checkbox" checked={state.sound} onChange={(event) => dispatch({ type: 'sound', enabled: event.target.checked })} /> Sonidos de respuesta</label>
+        <button className="secondary" onClick={exportProgress} type="button">Exportar progreso</button>
+        <label htmlFor="progress-import">Recuperar desde un archivo de progreso</label>
+        <input id="progress-import" type="file" accept="application/json,.json" onChange={async (event) => {
+          setReplacementProgress(null)
+          setImportMessage('')
+          const file = event.target.files?.[0]
+          if (!file) { setImportText(''); return }
+          try { setImportText(await file.text()) }
+          catch { setImportText(''); setImportMessage('No se pudo leer el archivo. El progreso actual no cambió.') }
+        }} />
+        <button className="secondary" onClick={prepareImport} type="button">Validar copia</button>
+        <p role="status">{importMessage}</p>
+        {replacementProgress && <button className="primary" onClick={() => { dispatch({ type: 'replace', progress: replacementProgress }); setSavingEnabled(true); setReplacementProgress(null); setImportMessage('Progreso recuperado.'); setCelebration(null) }} type="button">Confirmar reemplazo</button>}
+      </details>
     </main>
   )
 }

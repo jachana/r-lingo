@@ -1,12 +1,14 @@
 export type MatchPair = { left: string; right: string }
 
 export type Challenge = {
+  id: string
   prompt: string
   context: string
   code?: string
   choices: string[]
   answer: string
   acceptedAnswers?: string[]
+  validation?: 'exact' | 'string-vector'
   gap?: { template: string; blank: string; acceptedBlanks?: string[] }
   tokens?: { parts: string[]; distractors: string[] }
   explain: string
@@ -14,6 +16,7 @@ export type Challenge = {
 }
 
 export type Lesson = {
+  id: string
   title: string
   tag: string
   goal: string
@@ -34,6 +37,7 @@ export type Lesson = {
 
 export const lessons: Lesson[] = [
   {
+    id: 'r-basics',
     title: 'Primeros pasos en R',
     tag: 'Unidad 1',
     goal: 'Objetos, comentarios y scripts reproducibles',
@@ -70,6 +74,7 @@ export const lessons: Lesson[] = [
     ],
     challenges: [
       {
+        id: 'r-basics-q01',
         prompt: 'Guarda el valor 42 en un objeto llamado tamano_muestra.',
         context: 'En investigación conviene guardar números clave para reutilizarlos sin copiarlos a mano.',
         choices: ['tamano_muestra <- 42', '42 -> tamano_muestra()', 'tamano_muestra == 42'],
@@ -81,6 +86,7 @@ export const lessons: Lesson[] = [
         concept: 'asignación y objetos',
       },
       {
+        id: 'r-basics-q02',
         prompt: 'Cuál línea agrega un comentario en un script de R?',
         context: 'Los comentarios ayudan a explicar decisiones, por ejemplo por qué se excluyó una comuna o un registro.',
         choices: ['# excluir registros sin edad', '// excluir registros sin edad', 'comment(excluir registros sin edad)'],
@@ -89,6 +95,7 @@ export const lessons: Lesson[] = [
         concept: 'comentarios en scripts',
       },
       {
+        id: 'r-basics-q03',
         prompt: 'Cuál nombre de objeto es más claro para guardar casos confirmados?',
         context: 'Los nombres claros hacen que un análisis de salud pública sea auditable.',
         choices: ['casos_confirmados', 'x1', 'datos.final.final2'],
@@ -97,6 +104,7 @@ export const lessons: Lesson[] = [
         concept: 'nombres de objetos',
       },
       {
+        id: 'r-basics-q04',
         prompt: 'Qué comando calcula casos por 100.000 habitantes si ya existen casos y población?',
         context: 'Las tasas permiten comparar comunas de distinto tamaño.',
         choices: ['casos / poblacion * 100000', 'casos + poblacion * 100000', 'poblacion / casos'],
@@ -109,6 +117,7 @@ export const lessons: Lesson[] = [
     ],
   },
   {
+    id: 'vectors',
     title: 'Vectores y tipos de datos',
     tag: 'Unidad 2',
     goal: 'Entender números, texto y valores lógicos',
@@ -145,7 +154,8 @@ export const lessons: Lesson[] = [
     ],
     challenges: [
       {
-        prompt: 'Crea un vector con tres edades: 34, 45 y 52.',
+        id: 'vectors-q01',
+        prompt: 'Crea un vector llamado edades con tres valores: 34, 45 y 52.',
         context: 'Los vectores son la base de muchas columnas en R.',
         choices: ['edades <- c(34, 45, 52)', 'edades <- list[34, 45, 52]', 'edades <- 34 + 45 + 52'],
         answer: 'edades <- c(34, 45, 52)',
@@ -156,6 +166,7 @@ export const lessons: Lesson[] = [
         concept: 'vectores con c()',
       },
       {
+        id: 'vectors-q02',
         prompt: 'Cuál valor es texto en R?',
         context: 'Comunas, síntomas y categorías suelen guardarse como texto.',
         choices: ['"Santiago"', 'Santiago', 'TRUE'],
@@ -164,6 +175,7 @@ export const lessons: Lesson[] = [
         concept: 'texto y comillas',
       },
       {
+        id: 'vectors-q03',
         prompt: 'Qué comando revisa el tipo de un objeto llamado edad?',
         context: 'Antes de calcular promedios, conviene confirmar que edad sea numérica.',
         choices: ['class(edad)', 'kind(edad)', 'type = edad'],
@@ -174,6 +186,7 @@ export const lessons: Lesson[] = [
         concept: 'tipos de datos',
       },
       {
+        id: 'vectors-q04',
         prompt: 'Cuál valor lógico representa verdadero en R?',
         context: 'Los filtros usan condiciones que son verdaderas o falsas para cada fila.',
         choices: ['TRUE', '"TRUE"', 'verdadero()'],
@@ -184,6 +197,7 @@ export const lessons: Lesson[] = [
     ],
   },
   {
+    id: 'tables',
     title: 'Tablas de datos',
     tag: 'Unidad 3',
     goal: 'Cargar, mirar y entender data frames',
@@ -220,6 +234,7 @@ export const lessons: Lesson[] = [
     ],
     challenges: [
       {
+        id: 'tables-q01',
         prompt: 'Lee un archivo CSV llamado vigilancia_respiratoria.csv y guárdalo como vigilancia.',
         context: 'Muchos datos de vigilancia respiratoria llegan desde planillas exportadas como CSV.',
         choices: ['vigilancia <- read.csv("vigilancia_respiratoria.csv")', 'vigilancia <- open.csv("vigilancia_respiratoria.csv")', 'read("vigilancia_respiratoria.csv") -> csv'],
@@ -234,6 +249,7 @@ export const lessons: Lesson[] = [
         concept: 'importar CSV',
       },
       {
+        id: 'tables-q02',
         prompt: 'Muestra las primeras filas de un data frame llamado vigilancia.',
         context: 'Un vistazo rápido ayuda a encontrar problemas de encabezados o codificación.',
         choices: ['head(vigilancia)', 'top(vigilancia)', 'vigilancia.first(6)'],
@@ -243,6 +259,7 @@ export const lessons: Lesson[] = [
         concept: 'previsualizar datos',
       },
       {
+        id: 'tables-q03',
         prompt: 'Qué comando muestra los nombres de columnas de casos?',
         context: 'Saber cómo se llaman las columnas evita errores al filtrar o resumir.',
         choices: ['names(casos)', 'columns(casos)', 'casos.names()'],
@@ -252,6 +269,7 @@ export const lessons: Lesson[] = [
         concept: 'nombres de columnas',
       },
       {
+        id: 'tables-q04',
         prompt: 'Qué comando da un resumen rápido de variables en encuesta?',
         context: 'Sirve para ver rangos, frecuencias y posibles valores extremos.',
         choices: ['summary(encuesta)', 'describe.now(encuesta)', 'quick(encuesta)'],
@@ -263,6 +281,7 @@ export const lessons: Lesson[] = [
     ],
   },
   {
+    id: 'cleaning',
     title: 'Limpieza inicial',
     tag: 'Unidad 4',
     goal: 'Renombrar, seleccionar y manejar datos faltantes',
@@ -299,6 +318,7 @@ export const lessons: Lesson[] = [
     ],
     challenges: [
       {
+        id: 'cleaning-q01',
         prompt: 'Con dplyr, qué verbo deja solo algunas columnas?',
         context: 'Seleccionar columnas reduce ruido cuando analizas una pregunta concreta.',
         choices: ['select()', 'filter()', 'arrange()'],
@@ -307,6 +327,7 @@ export const lessons: Lesson[] = [
         concept: 'seleccionar columnas',
       },
       {
+        id: 'cleaning-q02',
         prompt: 'Qué valor representa dato faltante en R?',
         context: 'En salud pública, una edad o resultado faltante no es cero: es desconocido.',
         choices: ['NA', '0', '"faltante" siempre'],
@@ -315,6 +336,7 @@ export const lessons: Lesson[] = [
         concept: 'valores faltantes',
       },
       {
+        id: 'cleaning-q03',
         prompt: 'Qué comando cuenta valores faltantes en edad?',
         context: 'Antes de reportar edad promedio, conviene saber cuantas edades faltan.',
         choices: ['sum(is.na(edad))', 'count(edad == NA)', 'missing(edad)'],
@@ -325,6 +347,7 @@ export const lessons: Lesson[] = [
         concept: 'contar NA',
       },
       {
+        id: 'cleaning-q04',
         prompt: 'Qué verbo de dplyr sirve para crear o modificar una columna?',
         context: 'Podrías crear una columna de grupo etario a partir de edad para reportar riesgo por tramo.',
         choices: ['mutate()', 'select()', 'slice()'],
@@ -335,6 +358,7 @@ export const lessons: Lesson[] = [
     ],
   },
   {
+    id: 'filtering',
     title: 'Filtrar casos',
     tag: 'Unidad 5',
     goal: 'Trabajar con subconjuntos de interés',
@@ -371,7 +395,8 @@ export const lessons: Lesson[] = [
     ],
     challenges: [
       {
-        prompt: 'Con dplyr cargado, qué expresión mantiene solo edad de 18 o más?',
+        id: 'filtering-q01',
+        prompt: 'Completa casos |> ... para conservar personas de 18 años o más.',
         context: 'Filtrar por edad es común al definir poblaciones de estudio.',
         choices: ['filter(edad >= 18)', 'select(edad >= 18)', 'mutate(edad >= 18)'],
         answer: 'filter(edad >= 18)',
@@ -381,6 +406,7 @@ export const lessons: Lesson[] = [
         concept: 'filtrar filas',
       },
       {
+        id: 'filtering-q02',
         prompt: 'Cuál condición mantiene solo casos confirmados?',
         context: 'La definición de caso debe quedar explícita en el código.',
         choices: ['resultado == "confirmado"', 'resultado = "confirmado"', 'resultado <- "confirmado"'],
@@ -391,6 +417,7 @@ export const lessons: Lesson[] = [
         concept: 'comparaciones',
       },
       {
+        id: 'filtering-q03',
         prompt: 'Qué operador significa "y" al combinar condiciones?',
         context: 'Podrías pedir confirmados y residentes de una región.',
         choices: ['&', '|', '%in%'],
@@ -399,6 +426,7 @@ export const lessons: Lesson[] = [
         concept: 'condiciones combinadas',
       },
       {
+        id: 'filtering-q04',
         prompt: 'Qué expresión mantiene solo las comunas Santiago, Maipú y Puente Alto?',
         context: 'A veces quieres filtrar Santiago, Maipú y Puente Alto al mismo tiempo.',
         choices: ['comuna %in% c("Santiago", "Maipú", "Puente Alto")', 'comuna == c("Santiago", "Maipú", "Puente Alto")', 'comuna contains comunas'],
@@ -413,6 +441,7 @@ export const lessons: Lesson[] = [
     ],
   },
   {
+    id: 'indicators',
     title: 'Resumir indicadores',
     tag: 'Unidad 6',
     goal: 'Contar, agrupar y calcular porcentajes',
@@ -449,7 +478,8 @@ export const lessons: Lesson[] = [
     ],
     challenges: [
       {
-        prompt: 'Qué verbo agrupa una tabla por comuna antes de resumir?',
+        id: 'indicators-q01',
+        prompt: 'Completa casos |> ... para agrupar por comuna antes de resumir.',
         context: 'Agrupar permite calcular indicadores por territorio.',
         choices: ['group_by(comuna)', 'split_by(comuna)', 'arrange(comuna)'],
         answer: 'group_by(comuna)',
@@ -458,7 +488,8 @@ export const lessons: Lesson[] = [
         concept: 'agrupar datos',
       },
       {
-        prompt: 'Qué comando cuenta filas por comuna en dplyr?',
+        id: 'indicators-q02',
+        prompt: 'Completa casos |> ... para contar filas por comuna con dplyr.',
         context: 'Un conteo por comuna puede mostrar dónde hay más reportes.',
         choices: ['count(comuna)', 'sum(comuna)', 'total(comuna)'],
         answer: 'count(comuna)',
@@ -467,6 +498,7 @@ export const lessons: Lesson[] = [
         concept: 'contar grupos',
       },
       {
+        id: 'indicators-q03',
         prompt: 'Cómo calcularías porcentaje de positivos si positivos y total ya existen?',
         context: 'La positividad se expresa normalmente como porcentaje.',
         choices: ['positivos / total * 100', 'positivos + total * 100', 'total / positivos'],
@@ -477,6 +509,7 @@ export const lessons: Lesson[] = [
         concept: 'calcular porcentajes',
       },
       {
+        id: 'indicators-q04',
         prompt: 'Qué función calcula el promedio de edad ignorando NA?',
         context: 'Los faltantes no deberían romper un resumen si se decide excluirlos.',
         choices: ['mean(edad, na.rm = TRUE)', 'average(edad, remove_na)', 'mean(edad, missing = no)'],
@@ -489,6 +522,7 @@ export const lessons: Lesson[] = [
     ],
   },
   {
+    id: 'plots',
     title: 'Visualizar datos',
     tag: 'Unidad 7',
     goal: 'Crear gráficos simples con ggplot2',
@@ -525,6 +559,7 @@ export const lessons: Lesson[] = [
     ],
     challenges: [
       {
+        id: 'plots-q01',
         prompt: 'Qué función inicia un gráfico con ggplot2?',
         context: 'ggplot define los datos y mapeos visuales antes de agregar capas.',
         choices: ['ggplot()', 'plotly_start()', 'make_chart()'],
@@ -533,6 +568,7 @@ export const lessons: Lesson[] = [
         concept: 'iniciar ggplot',
       },
       {
+        id: 'plots-q02',
         prompt: 'Qué capa agrega puntos a un gráfico?',
         context: 'Los puntos sirven para explorar relación entre dos variables, por ejemplo edad y días hasta consulta.',
         choices: ['geom_point()', 'geom_table()', 'plot_points()'],
@@ -541,6 +577,7 @@ export const lessons: Lesson[] = [
         concept: 'gráficos de puntos',
       },
       {
+        id: 'plots-q03',
         prompt: 'Qué capa sirve para una barra por categoría ya resumida?',
         context: 'Si ya tienes casos por comuna, una barra por comuna es directa.',
         choices: ['geom_col()', 'geom_point()', 'geom_box()'],
@@ -549,6 +586,7 @@ export const lessons: Lesson[] = [
         concept: 'gráficos de barras',
       },
       {
+        id: 'plots-q04',
         prompt: 'Qué variable suele ir en el eje x de una curva epidémica?',
         context: 'Una curva epidémica ordena casos en el tiempo.',
         choices: ['semana_epi', 'nombre_paciente', 'id_registro'],
@@ -559,6 +597,7 @@ export const lessons: Lesson[] = [
     ],
   },
   {
+    id: 'dates',
     title: 'Fechas y semanas',
     tag: 'Unidad 8',
     goal: 'Trabajar con fechas de vigilancia',
@@ -595,6 +634,7 @@ export const lessons: Lesson[] = [
     ],
     challenges: [
       {
+        id: 'dates-q01',
         prompt: 'Qué función base convierte texto a fecha?',
         context: 'Importar fechas como texto impide ordenar bien una línea de tiempo.',
         choices: ['as.Date()', 'toCalendar()', 'date_text()'],
@@ -603,6 +643,7 @@ export const lessons: Lesson[] = [
         concept: 'convertir fechas',
       },
       {
+        id: 'dates-q02',
         prompt: 'Si usas lubridate, qué función lee una fecha como "2026-07-02"?',
         context: 'El formato año-mes-día es común en bases exportadas.',
         choices: ['ymd("2026-07-02")', 'dmy("2026-07-02")', 'mdy("2026-07-02")'],
@@ -612,6 +653,7 @@ export const lessons: Lesson[] = [
         concept: 'leer fechas con lubridate',
       },
       {
+        id: 'dates-q03',
         prompt: 'Qué resta calcula días entre consulta e inicio?',
         context: 'La demora de consulta puede orientar intervenciones de comunicación.',
         choices: ['fecha_consulta - fecha_inicio', 'fecha_inicio + fecha_consulta', 'dias(fecha_consulta, fecha_inicio)'],
@@ -622,6 +664,7 @@ export const lessons: Lesson[] = [
         concept: 'diferencia entre fechas',
       },
       {
+        id: 'dates-q04',
         prompt: 'Para reportes mensuales, qué variable sería más útil?',
         context: 'Agrupar por mes permite preparar tableros y reportes periódicos.',
         choices: ['mes_notificacion', 'rut', 'observacion_libre'],
@@ -632,6 +675,7 @@ export const lessons: Lesson[] = [
     ],
   },
   {
+    id: 'export',
     title: 'Exportar resultados',
     tag: 'Unidad 9',
     goal: 'Guardar tablas y compartir evidencia',
@@ -668,6 +712,7 @@ export const lessons: Lesson[] = [
     ],
     challenges: [
       {
+        id: 'export-q01',
         prompt: 'Qué comando guarda una tabla resumen como CSV?',
         context: 'Exportar permite compartir resultados con otras personas del equipo.',
         choices: ['write.csv(resumen, "resumen.csv")', 'save.table(resumen, "resumen.csv")', 'export(resumen)'],
@@ -678,6 +723,7 @@ export const lessons: Lesson[] = [
         concept: 'exportar CSV',
       },
       {
+        id: 'export-q02',
         prompt: 'Qué función de ggplot2 guarda un gráfico en archivo?',
         context: 'Los gráficos suelen ir a informes o presentaciones.',
         choices: ['ggsave("curva.png")', 'save_plot_now("curva.png")', 'plot_export("curva.png")'],
@@ -687,6 +733,7 @@ export const lessons: Lesson[] = [
         concept: 'guardar gráficos',
       },
       {
+        id: 'export-q03',
         prompt: 'Qué nombre de archivo es más claro para una tabla de casos por comuna?',
         context: 'Los nombres ordenados evitan confundir versiones.',
         choices: ['casos_por_comuna_2026.csv', 'final_final.csv', 'tabla.csv'],
@@ -695,6 +742,7 @@ export const lessons: Lesson[] = [
         concept: 'nombrar salidas',
       },
       {
+        id: 'export-q04',
         prompt: 'Qué conviene guardar junto a los resultados?',
         context: 'La reproducibilidad permite explicar como se obtuvo cada número.',
         choices: ['El script usado para generar la salida', 'Solo una captura de pantalla', 'Nada, si el resultado se ve bien'],
@@ -877,6 +925,7 @@ ggsave("curva_epidemica.png", width = 8, height = 5)`,
 export const extraChallenges: Record<string, Challenge[]> = {
   'Primeros pasos en R': [
     {
+      id: 'r-basics-q05',
       prompt: 'Qué línea guarda 125000 como población comunal?',
       context: 'La población se usa como denominador para tasas comunales.',
       choices: ['poblacion <- 125000', '125000 == poblacion', 'poblacion(125000)'],
@@ -888,6 +937,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'asignación y objetos',
     },
     {
+      id: 'r-basics-q06',
       prompt: 'Cuál objeto está mejor nombrado para guardar positivos de PCR?',
       context: 'Un nombre claro evita confundir resultados de laboratorio.',
       choices: ['pcr_positivos', 'pp', 'dato3'],
@@ -896,6 +946,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'nombres de objetos',
     },
     {
+      id: 'r-basics-q07',
       prompt: 'Qué línea explica una decisión sin ejecutarse?',
       context: 'Los comentarios documentan decisiones metodológicas.',
       choices: ['# excluir duplicados por rut', 'excluir duplicados por rut', 'print(excluir duplicados)'],
@@ -904,6 +955,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'comentarios en scripts',
     },
     {
+      id: 'r-basics-q08',
       prompt: 'Si casos = 50 y poblacion = 100000, qué calcula incidencia?',
       context: 'La incidencia por 100.000 permite comparar comunas.',
       choices: ['casos / poblacion * 100000', 'poblacion / casos * 100000', 'casos * poblacion'],
@@ -914,6 +966,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'cálculos con objetos',
     },
     {
+      id: 'r-basics-q09',
       prompt: 'Qué objeto conviene evitar por poco claro?',
       context: 'Los análisis se revisan después por otras personas o por ti misma.',
       choices: ['x', 'casos_sospechosos', 'poblacion_comunal'],
@@ -922,6 +975,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'nombres de objetos',
     },
     {
+      id: 'r-basics-q10',
       prompt: 'Qué comentario sería útil en un análisis de brote?',
       context: 'Una exclusión debe quedar justificada.',
       choices: ['# excluir registros sin fecha de inicio', '# hola', '# tabla bonita'],
@@ -930,6 +984,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'comentarios en scripts',
     },
     {
+      id: 'r-basics-q11',
       prompt: '¿Qué devuelve R?',
       context: 'Leer una expresión simple ayuda a anticipar indicadores antes de correr el script.',
       code: 'casos <- 50\npoblacion <- 100000\ncasos / poblacion * 100000',
@@ -939,9 +994,10 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'cálculos con objetos',
     },
     {
+      id: 'r-basics-q12',
       prompt: 'Este código falla. ¿Dónde está el error?',
       context: 'Detectar errores de nombres evita perder tiempo buscando datos inexistentes.',
-      code: 'casos_confirmados <- 342\ncasos_confirmado / poblacion * 100000',
+      code: 'poblacion <- 125000\ncasos_confirmados <- 342\ncasos_confirmado / poblacion * 100000',
       choices: ['El objeto `casos_confirmado` no existe', 'El operador `/` no existe en R', '`poblacion` no puede usarse en tasas'],
       answer: 'El objeto `casos_confirmado` no existe',
       explain: 'R distingue nombres exactos: falta la `s` final de `casos_confirmados`.',
@@ -950,7 +1006,9 @@ export const extraChallenges: Record<string, Challenge[]> = {
   ],
   'Vectores y tipos de datos': [
     {
+      id: 'vectors-q05',
       prompt: 'Qué comando crea un vector de comunas?',
+        validation: 'string-vector',
       context: 'Las comunas son texto y deben ir entre comillas.',
       choices: ['comunas <- c("Santiago", "Maipu")', 'comunas <- Santiago + Maipu', 'comunas <- c(Santiago, Maipu)'],
       answer: 'comunas <- c("Santiago", "Maipu")',
@@ -961,6 +1019,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'vectores con c()',
     },
     {
+      id: 'vectors-q06',
       prompt: 'Cuál es un valor numérico?',
       context: 'Edad y recuentos suelen ser numéricos.',
       choices: ['42', '"42"', 'cuarenta_dos'],
@@ -969,6 +1028,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'tipos de datos',
     },
     {
+      id: 'vectors-q07',
       prompt: 'Qué representa FALSE en R?',
       context: 'Una condición puede cumplirse o no para cada registro.',
       choices: ['Falso lógico', 'Texto', 'Dato faltante'],
@@ -977,6 +1037,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'valores lógicos',
     },
     {
+      id: 'vectors-q08',
       prompt: 'Qué comando revisa el tipo de resultado_pcr?',
       context: 'Conviene confirmar si resultado_pcr llegó como texto o factor.',
       choices: ['class(resultado_pcr)', 'type(resultado_pcr)', 'kind(resultado_pcr)'],
@@ -986,6 +1047,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'tipos de datos',
     },
     {
+      id: 'vectors-q09',
       prompt: 'Cuál valor está escrito como texto?',
       context: 'Los resultados de laboratorio suelen ser categorías.',
       choices: ['"positivo"', 'positivo', 'TRUE'],
@@ -994,6 +1056,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'texto y comillas',
     },
     {
+      id: 'vectors-q10',
       prompt: 'Qué vector podría representar casos semanales?',
       context: 'Un vector puede guardar conteos por semana.',
       choices: ['casos <- c(12, 18, 25)', 'casos <- "12, 18, 25"', 'casos <- TRUE'],
@@ -1005,6 +1068,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'vectores con c()',
     },
     {
+      id: 'vectors-q11',
       prompt: '¿Qué devuelve R?',
       context: 'Leer código y anticipar el resultado entrena el ojo analítico.',
       code: 'edades <- c(34, 45, 52)\nlength(edades)',
@@ -1014,6 +1078,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'vectores con c()',
     },
     {
+      id: 'vectors-q12',
       prompt: 'Este código falla. ¿Dónde está el error?',
       context: 'El texto sin comillas es una causa frecuente de errores al crear vectores.',
       code: 'comunas <- c(Santiago, Maipu)',
@@ -1025,6 +1090,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
   ],
   'Tablas de datos': [
     {
+      id: 'tables-q05',
       prompt: 'Qué comando permite ver columnas y tipos de vigilancia?',
       context: 'La estructura muestra si edad, fechas y resultados llegaron como esperabas.',
       choices: ['str(vigilancia)', 'shape(vigilancia)', 'columns(vigilancia)'],
@@ -1034,6 +1100,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'estructura de datos',
     },
     {
+      id: 'tables-q06',
       prompt: 'Qué revisarías primero tras importar un CSV?',
       context: 'Antes de calcular, conviene confirmar que el archivo se leyó bien.',
       choices: ['head(vigilancia)', 'ggsave(vigilancia)', 'delete(vigilancia)'],
@@ -1043,6 +1110,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'previsualizar datos',
     },
     {
+      id: 'tables-q07',
       prompt: 'Qué comando muestra nombres de columnas?',
       context: 'Necesitas nombres exactos para filtrar o seleccionar.',
       choices: ['names(vigilancia)', 'labels_only(vigilancia)', 'headers(vigilancia)'],
@@ -1052,6 +1120,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'nombres de columnas',
     },
     {
+      id: 'tables-q08',
       prompt: 'Qué archivo suena más como entrada de vigilancia?',
       context: 'Los nombres de archivo también comunican contexto.',
       choices: ['vigilancia_respiratoria.csv', 'cosas.csv', 'final.xlsx.csv.csv'],
@@ -1060,6 +1129,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'importar CSV',
     },
     {
+      id: 'tables-q09',
       prompt: 'Qué función da mínimos, máximos y frecuencias básicas?',
       context: 'Sirve para detectar edades imposibles o categorías inesperadas.',
       choices: ['summary(vigilancia)', 'peek(vigilancia)', 'scan_fast(vigilancia)'],
@@ -1068,6 +1138,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'resumen de variables',
     },
     {
+      id: 'tables-q10',
       prompt: 'Si una columna se llama fecha_consulta, qué representa probablemente?',
       context: 'Los nombres de columnas ayudan a interpretar la tabla.',
       choices: ['Fecha en que la persona consultó', 'Edad de la persona', 'Código de comuna'],
@@ -1076,6 +1147,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'nombres de columnas',
     },
     {
+      id: 'tables-q11',
       prompt: '¿Qué devuelve R?',
       context: 'Una revisión rápida ayuda a confirmar si estás mirando la tabla correcta.',
       code: 'names(vigilancia)',
@@ -1085,7 +1157,8 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'nombres de columnas',
     },
     {
-      prompt: 'Este código falla. ¿Dónde está el error?',
+      id: 'tables-q12',
+      prompt: 'Sin cargar readr, este código falla. ¿Qué función base corresponde?',
       context: 'Importar archivos exige escribir bien el nombre de la función.',
       code: 'vigilancia <- read_csv("vigilancia_respiratoria.csv")',
       choices: ['`read_csv()` no es R base; aquí se enseñó `read.csv()`', 'El archivo CSV no puede tener guiones bajos', 'La asignación con `<-` está prohibida'],
@@ -1096,7 +1169,8 @@ export const extraChallenges: Record<string, Challenge[]> = {
   ],
   'Limpieza inicial': [
     {
-      prompt: 'Qué comando selecciona comuna y edad?',
+      id: 'cleaning-q05',
+      prompt: 'Completa casos |> ... para conservar las columnas comuna y edad.',
       context: 'Seleccionar columnas deja la tabla enfocada en la pregunta.',
       choices: ['select(comuna, edad)', 'filter(comuna, edad)', 'choose_rows(comuna, edad)'],
       answer: 'select(comuna, edad)',
@@ -1106,7 +1180,8 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'seleccionar columnas',
     },
     {
-      prompt: 'Qué comando crea una columna mayor_60?',
+      id: 'cleaning-q06',
+      prompt: 'Completa casos |> ... para crear una columna mayor_60.',
       context: 'Los grupos de riesgo se pueden derivar desde edad.',
       choices: ['mutate(mayor_60 = edad >= 60)', 'select(mayor_60 = edad >= 60)', 'filter(mayor_60 = edad >= 60)'],
       answer: 'mutate(mayor_60 = edad >= 60)',
@@ -1116,6 +1191,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'crear columnas',
     },
     {
+      id: 'cleaning-q07',
       prompt: 'Qué significa NA en edad?',
       context: 'Un dato faltante no debe tratarse automáticamente como cero.',
       choices: ['Edad desconocida o faltante', 'Edad igual a cero', 'Edad negativa'],
@@ -1124,6 +1200,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'valores faltantes',
     },
     {
+      id: 'cleaning-q08',
       prompt: 'Qué detecta is.na(edad)?',
       context: 'Permite saber qué registros no tienen edad registrada.',
       choices: ['Valores faltantes', 'Valores mayores de edad', 'Valores duplicados'],
@@ -1132,6 +1209,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'contar NA',
     },
     {
+      id: 'cleaning-q09',
       prompt: 'Qué columna sería útil crear para análisis de riesgo?',
       context: 'Las personas mayores pueden analizarse como grupo prioritario.',
       choices: ['mayor_60', 'color_favorito', 'fila_original_sin_uso'],
@@ -1140,7 +1218,8 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'crear columnas',
     },
     {
-      prompt: 'Qué opción reduce una tabla a variables útiles para reporte comunal?',
+      id: 'cleaning-q10',
+      prompt: 'Completa casos |> ... para conservar las variables del reporte comunal.',
       context: 'No siempre necesitas todas las columnas del sistema original.',
       choices: ['select(comuna, edad, resultado_pcr)', 'mutate()', 'filter() sin condiciones'],
       answer: 'select(comuna, edad, resultado_pcr)',
@@ -1149,6 +1228,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'seleccionar columnas',
     },
     {
+      id: 'cleaning-q11',
       prompt: '¿Qué devuelve R?',
       context: 'Contar faltantes antes de resumir protege la interpretación.',
       code: 'edad <- c(34, NA, 52)\nsum(is.na(edad))',
@@ -1158,6 +1238,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'contar NA',
     },
     {
+      id: 'cleaning-q12',
       prompt: 'Este código falla. ¿Dónde está el error?',
       context: 'Los nombres de columnas nuevas deben ir a la izquierda del `=` en mutate.',
       code: 'mutate(edad >= 60 = mayor_60)',
@@ -1169,7 +1250,8 @@ export const extraChallenges: Record<string, Challenge[]> = {
   ],
   'Filtrar casos': [
     {
-      prompt: 'Qué filtro deja solo casos confirmados?',
+      id: 'filtering-q05',
+      prompt: 'Completa casos |> ... para conservar solo confirmados.',
       context: 'La definición de caso debe ser explícita.',
       choices: ['filter(resultado == "confirmado")', 'filter(resultado <- "confirmado")', 'select(resultado == "confirmado")'],
       answer: 'filter(resultado == "confirmado")',
@@ -1179,7 +1261,8 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'filtrar filas',
     },
     {
-      prompt: 'Qué condición identifica mayores de 60?',
+      id: 'filtering-q06',
+      prompt: 'Qué condición identifica personas de 60 años o más?',
       context: 'Los grupos etarios ayudan a priorizar riesgo.',
       choices: ['edad >= 60', 'edad => 60', 'edad = 60+'],
       answer: 'edad >= 60',
@@ -1188,7 +1271,8 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'comparaciones',
     },
     {
-      prompt: 'Qué filtro combina confirmados y mayores de edad?',
+      id: 'filtering-q07',
+      prompt: 'Completa casos |> ... para conservar confirmados de 18 años o más.',
       context: 'A veces la población de estudio requiere más de un criterio.',
       choices: ['filter(resultado == "confirmado" & edad >= 18)', 'filter(resultado == "confirmado" | edad >= 18 siempre)', 'select(resultado, edad)'],
       answer: 'filter(resultado == "confirmado" & edad >= 18)',
@@ -1197,6 +1281,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'condiciones combinadas',
     },
     {
+      id: 'filtering-q08',
       prompt: 'Qué operador usarías para filtrar tres comunas?',
       context: 'Un brote puede concentrarse en varias comunas vecinas.',
       choices: ['%in%', '== solamente', '<-'],
@@ -1205,6 +1290,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'pertenencia con %in%',
     },
     {
+      id: 'filtering-q09',
       prompt: 'Qué condición mantiene semana epidemiológica 20 o posterior?',
       context: 'Filtrar periodos permite analizar una fase del brote.',
       choices: ['semana_epi >= 20', 'semana_epi <- 20', 'semana_epi == posterior'],
@@ -1214,7 +1300,8 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'comparaciones',
     },
     {
-      prompt: 'Qué filtro usa texto correctamente?',
+      id: 'filtering-q10',
+      prompt: 'Completa casos |> ... usando texto correctamente.',
       context: 'Las categorías de texto deben compararse con comillas.',
       choices: ['filter(comuna == "Santiago")', 'filter(comuna == Santiago)', 'filter("comuna" == Santiago)'],
       answer: 'filter(comuna == "Santiago")',
@@ -1224,6 +1311,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'filtrar filas',
     },
     {
+      id: 'filtering-q11',
       prompt: '¿Qué devuelve R?',
       context: 'Leer condiciones ayuda a revisar criterios de inclusión.',
       code: 'edad <- 62\nedad >= 60',
@@ -1233,6 +1321,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'comparaciones',
     },
     {
+      id: 'filtering-q12',
       prompt: 'Este código falla. ¿Dónde está el error?',
       context: 'Detectar errores comunes ahorra horas frente a RStudio.',
       code: 'filter(casos, comuna == Santiago)',
@@ -1244,6 +1333,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
   ],
   'Resumir indicadores': [
     {
+      id: 'indicators-q05',
       prompt: 'Qué hace group_by(comuna)?',
       context: 'Agrupar por comuna permite calcular indicadores territoriales.',
       choices: ['Define grupos por comuna', 'Borra la comuna', 'Ordena alfabéticamente solamente'],
@@ -1252,6 +1342,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'agrupar datos',
     },
     {
+      id: 'indicators-q06',
       prompt: 'Qué función cuenta registros por grupo?',
       context: 'Contar casos por comuna es un resumen epidemiológico básico.',
       choices: ['count()', 'mean()', 'select()'],
@@ -1260,6 +1351,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'contar grupos',
     },
     {
+      id: 'indicators-q07',
       prompt: 'Qué calcula positivos / total * 100?',
       context: 'La positividad se interpreta como porcentaje.',
       choices: ['Porcentaje de positivos', 'Número de comunas', 'Promedio de edad'],
@@ -1268,6 +1360,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'calcular porcentajes',
     },
     {
+      id: 'indicators-q08',
       prompt: 'Qué significa na.rm = TRUE en mean()?',
       context: 'Los datos faltantes pueden impedir calcular promedios.',
       choices: ['Ignorar NA para ese cálculo', 'Convertir NA en cero', 'Borrar toda la tabla'],
@@ -1276,7 +1369,8 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'promedios con NA',
     },
     {
-      prompt: 'Qué resumen sirve para casos por semana?',
+      id: 'indicators-q09',
+      prompt: 'Completa casos |> ... para contar casos por semana.',
       context: 'La vigilancia temporal necesita conteos por semana epidemiológica.',
       choices: ['count(semana_epi)', 'select(semana_epi)', 'class(semana_epi)'],
       answer: 'count(semana_epi)',
@@ -1285,6 +1379,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'contar grupos',
     },
     {
+      id: 'indicators-q10',
       prompt: 'Qué indicador requiere denominador poblacional?',
       context: 'Las tasas comparan territorios con distinto tamaño.',
       choices: ['Incidencia por 100.000', 'Nombre de comuna', 'ID de registro'],
@@ -1293,6 +1388,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'calcular porcentajes',
     },
     {
+      id: 'indicators-q11',
       prompt: '¿Qué devuelve R?',
       context: 'Anticipar un porcentaje ayuda a detectar resultados imposibles.',
       code: 'positivos <- 25\ntotal <- 100\npositivos / total * 100',
@@ -1302,6 +1398,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'calcular porcentajes',
     },
     {
+      id: 'indicators-q12',
       prompt: 'Este código falla. ¿Dónde está el error?',
       context: 'Los argumentos de funciones deben escribirse con nombres exactos.',
       code: 'mean(edad, na.rm == TRUE)',
@@ -1313,6 +1410,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
   ],
   'Visualizar datos': [
     {
+      id: 'plots-q05',
       prompt: 'Qué función inicia un gráfico de ggplot2?',
       context: 'Todo gráfico de ggplot2 parte declarando datos y estética.',
       choices: ['ggplot()', 'geom_start()', 'chart()'],
@@ -1321,6 +1419,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'iniciar ggplot',
     },
     {
+      id: 'plots-q06',
       prompt: 'Qué capa usarías para una curva epidémica semanal?',
       context: 'Una curva temporal suele unir puntos en el tiempo.',
       choices: ['geom_line()', 'geom_col() siempre', 'geom_text_only()'],
@@ -1329,6 +1428,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'series temporales simples',
     },
     {
+      id: 'plots-q07',
       prompt: 'Qué pondrías en x para comparar casos por semana?',
       context: 'El eje x de una serie temporal representa tiempo.',
       choices: ['semana_epi', 'rut', 'observacion_libre'],
@@ -1337,6 +1437,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'series temporales simples',
     },
     {
+      id: 'plots-q08',
       prompt: 'Qué capa sirve para barras de casos por comuna ya resumidos?',
       context: 'Si la tabla ya tiene una columna casos, la altura ya está calculada.',
       choices: ['geom_col()', 'geom_point()', 'geom_date()'],
@@ -1345,6 +1446,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'gráficos de barras',
     },
     {
+      id: 'plots-q09',
       prompt: 'Qué capa muestra observaciones como puntos?',
       context: 'Puedes explorar edad versus días hasta consulta.',
       choices: ['geom_point()', 'geom_col()', 'geom_none()'],
@@ -1353,6 +1455,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'gráficos de puntos',
     },
     {
+      id: 'plots-q10',
       prompt: 'Qué gráfico usarías para comparar comunas?',
       context: 'Las barras funcionan bien para comparar categorías.',
       choices: ['Barras con geom_col()', 'Línea sin eje temporal', 'Solo tabla sin gráfico'],
@@ -1361,6 +1464,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'gráficos de barras',
     },
     {
+      id: 'plots-q11',
       prompt: '¿Qué devuelve R?',
       context: 'Leer capas de ggplot ayuda a reconocer el tipo de gráfico antes de verlo.',
       code: 'ggplot(resumen, aes(x = comuna, y = casos)) +\n  geom_col()',
@@ -1370,7 +1474,8 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'gráficos de barras',
     },
     {
-      prompt: 'Este código falla. ¿Dónde está el error?',
+      id: 'plots-q12',
+      prompt: 'Este código no añade la línea al gráfico. ¿Qué falta?',
       context: 'Las capas de ggplot se suman con `+`.',
       code: 'ggplot(resumen, aes(x = semana_epi, y = casos))\ngeom_line()',
       choices: ['Falta `+` antes de `geom_line()`', '`semana_epi` no puede ir en x', '`geom_line()` solo sirve para texto'],
@@ -1381,6 +1486,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
   ],
   'Fechas y semanas': [
     {
+      id: 'dates-q05',
       prompt: 'Qué función convierte texto compatible a fecha en R base?',
       context: 'Las fechas deben ser fechas reales para calcular demoras.',
       choices: ['as.Date()', 'date_make()', 'text_to_day()'],
@@ -1389,6 +1495,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'convertir fechas',
     },
     {
+      id: 'dates-q06',
       prompt: 'Qué función lee formato año-mes-día en lubridate?',
       context: 'El formato 2026-07-02 aparece mucho en bases exportadas.',
       choices: ['ymd()', 'dmy()', 'mdy()'],
@@ -1397,6 +1504,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'leer fechas con lubridate',
     },
     {
+      id: 'dates-q07',
       prompt: 'Qué calcula fecha_consulta - fecha_inicio?',
       context: 'La demora puede orientar educación o acceso a atención.',
       choices: ['Días entre inicio y consulta', 'Edad de la persona', 'Número de casos'],
@@ -1405,6 +1513,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'diferencia entre fechas',
     },
     {
+      id: 'dates-q08',
       prompt: 'Qué variable sirve para reportes mensuales?',
       context: 'Los equipos suelen reportar por mes o semana.',
       choices: ['mes_notificacion', 'rut', 'nombre'],
@@ -1413,6 +1522,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'periodos de reporte',
     },
     {
+      id: 'dates-q09',
       prompt: 'Qué fecha conviene usar para una curva de inicio de síntomas?',
       context: 'La curva cambia según la fecha elegida.',
       choices: ['fecha_inicio_sintomas', 'fecha_digitacion', 'fecha_descarga_archivo'],
@@ -1421,6 +1531,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'convertir fechas',
     },
     {
+      id: 'dates-q10',
       prompt: 'Qué problema hay si las fechas quedan como texto?',
       context: 'El orden temporal puede quedar mal interpretado.',
       choices: ['No se calculan bien demoras ni orden temporal', 'Se vuelven más exactas', 'Se grafican solas'],
@@ -1429,6 +1540,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'convertir fechas',
     },
     {
+      id: 'dates-q11',
       prompt: '¿Qué devuelve R?',
       context: 'Restar fechas permite medir demoras de atención.',
       code: 'fecha_inicio <- as.Date("2026-07-02")\nfecha_consulta <- as.Date("2026-07-05")\nfecha_consulta - fecha_inicio',
@@ -1438,7 +1550,8 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'diferencia entre fechas',
     },
     {
-      prompt: 'Este código falla. ¿Dónde está el error?',
+      id: 'dates-q12',
+      prompt: 'Este código interpreta mal la fecha. ¿Qué formato espera la función?',
       context: 'El formato de fecha debe coincidir con la función que lo lee.',
       code: 'ymd("02-07-2026")',
       choices: ['`ymd()` espera año-mes-día', 'Las fechas siempre van sin comillas', '`ymd()` solo acepta meses en texto'],
@@ -1449,6 +1562,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
   ],
   'Exportar resultados': [
     {
+      id: 'export-q05',
       prompt: 'Qué función guarda una tabla como CSV?',
       context: 'Una tabla resumida puede compartirse con equipos territoriales.',
       choices: ['write.csv()', 'ggsave()', 'filter()'],
@@ -1457,6 +1571,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'exportar CSV',
     },
     {
+      id: 'export-q06',
       prompt: 'Qué argumento evita una columna extra de números de fila?',
       context: 'Los CSV para compartir suelen no necesitar row names.',
       choices: ['row.names = FALSE', 'names.rows = TRUE', 'delete.rows = TRUE'],
@@ -1466,6 +1581,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'exportar CSV',
     },
     {
+      id: 'export-q07',
       prompt: 'Qué función guarda un gráfico de ggplot2?',
       context: 'Las figuras pueden ir a informes o presentaciones.',
       choices: ['ggsave()', 'write.csv()', 'summary()'],
@@ -1474,6 +1590,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'guardar gráficos',
     },
     {
+      id: 'export-q08',
       prompt: 'Qué nombre de archivo es más informativo?',
       context: 'Un buen nombre reduce confusión entre versiones.',
       choices: ['curva_epidemica_semana_20.png', 'grafico.png', 'final3.png'],
@@ -1482,6 +1599,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'nombrar salidas',
     },
     {
+      id: 'export-q09',
       prompt: 'Qué debes guardar junto a tabla y gráfico?',
       context: 'La reproducibilidad permite defender el resultado.',
       choices: ['El script que generó la salida', 'Solo una captura', 'Nada más'],
@@ -1490,6 +1608,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'reproducibilidad',
     },
     {
+      id: 'export-q10',
       prompt: 'Qué salida sirve para revisar cobertura por comuna en Excel?',
       context: 'CSV es un formato común para compartir tablas simples.',
       choices: ['cobertura_por_comuna.csv', 'cobertura_por_comuna.exe', 'cobertura_por_comuna.tmp'],
@@ -1498,6 +1617,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'exportar CSV',
     },
     {
+      id: 'export-q11',
       prompt: '¿Qué devuelve R?',
       context: 'Leer una exportación ayuda a saber qué archivo se generará.',
       code: 'write.csv(resumen, "resumen.csv", row.names = FALSE)',
@@ -1507,6 +1627,7 @@ export const extraChallenges: Record<string, Challenge[]> = {
       concept: 'exportar CSV',
     },
     {
+      id: 'export-q12',
       prompt: 'Este código falla. ¿Dónde está el error?',
       context: 'Los nombres de archivo deben ir como texto entre comillas.',
       code: 'ggsave(curva.png)',
@@ -1520,8 +1641,4 @@ export const extraChallenges: Record<string, Challenge[]> = {
 
 export function getLessonChallenges(lesson: Lesson) {
   return [...lesson.challenges, ...(extraChallenges[lesson.title] ?? [])]
-}
-
-export function getChallengeKey(lessonPosition: number, challengePosition: number) {
-  return `${lessonPosition}-${challengePosition}`
 }

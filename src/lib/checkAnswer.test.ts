@@ -33,6 +33,33 @@ describe('normalizeCode', () => {
 describe('checkTypedAnswer', () => {
   const expected = ['mean(edad, na.rm = TRUE)']
 
+  it('rejects different vector values and object names under the default exact policy', () => {
+    const expectedVector = ['comunas <- c("Santiago", "Maipu")']
+    expect(checkTypedAnswer('comunas <- c("wrong")', expectedVector).correct).toBe(false)
+    expect(checkTypedAnswer('zonas <- c("Santiago", "Maipu")', expectedVector).correct).toBe(false)
+  })
+
+  it('does not change apostrophes or punctuation inside string literals', () => {
+    expect(normalizeCode('x <- "don\'t"')).not.toBe(normalizeCode('x <- "don t"'))
+    expect(normalizeCode("x <- 'a,b'")).toBe(normalizeCode('x <- "a,b"'))
+    expect(checkTypedAnswer('x <- c("a,b", "c")', ['x <- c("a,b", "c")']).correct).toBe(true)
+  })
+
+  it('open-ended string vectors accept quoted commas but reject empty or mixed vectors', () => {
+    const expectedVector = ['comunas <- c("Santiago", "Maipu")']
+    expect(checkTypedAnswer('x <- c("a,b")', expectedVector, 'string-vector').correct).toBe(true)
+    expect(checkTypedAnswer('x <- c()', expectedVector, 'string-vector').correct).toBe(false)
+    expect(checkTypedAnswer('x <- c("a", 1)', expectedVector, 'string-vector').correct).toBe(false)
+  })
+
+  it('open-ended vectors require a legal unquoted R object name', () => {
+    const expectedVector = ['comunas <- c("Santiago", "Maipu")']
+    for (const name of ['.2zonas', 'if', 'TRUE', 'NA_integer_']) {
+      expect(checkTypedAnswer(`${name} <- c("Sur")`, expectedVector, 'string-vector').correct).toBe(false)
+    }
+    expect(checkTypedAnswer('.zonas <- c("Sur")', expectedVector, 'string-vector').correct).toBe(true)
+  })
+
   it('accepts spacing variants', () => {
     expect(checkTypedAnswer('mean(edad,na.rm=TRUE)', expected).correct).toBe(true)
   })
@@ -53,9 +80,9 @@ describe('checkTypedAnswer', () => {
   it('accepts case and object-name variants for string vector creation', () => {
     const expectedVector = ['comunas <- c("Santiago", "Maipu")']
 
-    expect(checkTypedAnswer('comunas <- c("santiago","maipu")', expectedVector).correct).toBe(true)
-    expect(checkTypedAnswer('zonas = c("Santiago", "Maipu")', expectedVector).correct).toBe(true)
-    expect(checkTypedAnswer('mis_comunas <- c("providencia", "nunoa", "la florida")', expectedVector).correct).toBe(true)
+    expect(checkTypedAnswer('comunas <- c("santiago","maipu")', expectedVector, 'string-vector').correct).toBe(true)
+    expect(checkTypedAnswer('zonas = c("Santiago", "Maipu")', expectedVector, 'string-vector').correct).toBe(true)
+    expect(checkTypedAnswer('mis_comunas <- c("providencia", "nunoa", "la florida")', expectedVector, 'string-vector').correct).toBe(true)
   })
 
   it('does not accept unquoted values as string vector creation', () => {
