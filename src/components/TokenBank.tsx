@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { seededShuffle } from '../lib/shuffle'
 
 type TokenBankProps = {
@@ -8,21 +8,19 @@ type TokenBankProps = {
   checked: boolean
   correct: boolean
   disabled: boolean
-  onChange: (built: string) => void
+  placedIds: number[]
+  onChange: (built: string, ids: number[]) => void
 }
 
 type Chip = { id: number; label: string }
 
-export function TokenBank({ parts, distractors, seed, checked, correct, disabled, onChange }: TokenBankProps) {
+export function TokenBank({ parts, distractors, seed, checked, correct, disabled, placedIds, onChange }: TokenBankProps) {
   const pool = useMemo<Chip[]>(
     () => seededShuffle([...parts, ...distractors], seed).map((label, id) => ({ id, label })),
     [parts, distractors, seed],
   )
-  const [placedIds, setPlacedIds] = useState<number[]>([])
-
   function emit(nextPlaced: number[]) {
-    setPlacedIds(nextPlaced)
-    onChange(nextPlaced.map((id) => pool.find((chip) => chip.id === id)!.label).join(' '))
+    onChange(nextPlaced.map((id) => pool.find((chip) => chip.id === id)!.label).join(' '), nextPlaced)
   }
 
   const placedChips = placedIds.map((id) => pool.find((chip) => chip.id === id)!)
@@ -36,6 +34,7 @@ export function TokenBank({ parts, distractors, seed, checked, correct, disabled
           <button
             className="token-chip placed"
             disabled={disabled}
+            aria-label={`Quitar ${chip.label} de la respuesta`}
             key={chip.id}
             onClick={() => emit(placedIds.filter((id) => id !== chip.id))}
             type="button"
@@ -51,6 +50,7 @@ export function TokenBank({ parts, distractors, seed, checked, correct, disabled
             <button
               className={`token-chip ${used ? 'used' : ''}`}
               disabled={disabled || used}
+              aria-label={`Agregar ${chip.label} a la respuesta`}
               key={chip.id}
               onClick={() => emit([...placedIds, chip.id])}
               type="button"

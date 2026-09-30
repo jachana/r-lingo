@@ -10,6 +10,12 @@ const allChallenges = lessons.flatMap((lesson) =>
 )
 
 describe('content integrity', () => {
+  it('all lessons and challenges have unique authored stable IDs', () => {
+    expect(new Set(lessons.map((lesson) => lesson.id)).size).toBe(lessons.length)
+    const ids = allChallenges.map(({ challenge }) => challenge.id)
+    expect(new Set(ids).size).toBe(ids.length)
+    for (const id of ids) expect(id).toMatch(/^[a-z]+(?:-[a-z]+)*-q\d+$/)
+  })
   it('every extraChallenges key matches a lesson title', () => {
     const titles = new Set(lessons.map((lesson) => lesson.title))
     for (const key of Object.keys(extraChallenges)) {

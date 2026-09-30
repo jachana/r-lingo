@@ -1,0 +1,14 @@
+id,comuna,edad,resultado,fecha_inicio,fecha_consulta
+201,Antofagasta,19,confirmado,2026-09-01,2026-09-04
+202,Antofagasta,63,confirmado,2026-09-01,2026-09-03
+203,Antofagasta,29,confirmado,2026-09-02,2026-09-05
+204,Antofagasta,-3,confirmado,2026-09-03,2026-09-04
+205,La Serena,18,confirmado,2026-09-04,2026-09-06
+206,La Serena,17,confirmado,2026-09-05,2026-09-07
+207,La Serena,55,negativo,2026-09-06,2026-09-09
+208,La Serena,,negativo,2026-09-07,2026-09-09
+209,Osorno,45,confirmado,2026-09-08,2026-09-12
+210,Osorno,66,confirmado,2026-09-09,2026-09-11
+211,Osorno,12,negativo,2026-09-10,2026-09-13
+212,Osorno,,confirmado,2026-09-10,2026-09-14
+209,Osorno,45,confirmado,2026-09-08,2026-09-12

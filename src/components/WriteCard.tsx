@@ -15,12 +15,14 @@ export function WriteCard({ mode, gapTemplate, value, checked, correct, hint, re
     <div className={`write-card ${checked ? (correct ? 'correct' : 'wrong') : ''}`}>
       <label htmlFor="written-answer">{mode === 'gap' ? 'Rellena el espacio' : 'Escribe la respuesta'}</label>
       {mode === 'gap' && gapTemplate && (
-        <div className="gap-line" aria-hidden="true">
+        <div className="gap-line" id="gap-template">
           <code>{gapTemplate}</code>
         </div>
       )}
       <input
         autoComplete="off"
+        aria-describedby={mode === 'gap' ? 'gap-template' : undefined}
+        aria-invalid={checked && !correct}
         disabled={disabled}
         id="written-answer"
         onChange={(event) => onChange(event.target.value)}

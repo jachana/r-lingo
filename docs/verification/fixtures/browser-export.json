@@ -1,0 +1,109 @@
+{
+  "version": 3,
+  "lessonId": "r-basics",
+  "completedCorrect": [
+    "r-basics-q01"
+  ],
+  "completedLessons": [],
+  "xp": 20,
+  "streak": 1,
+  "hearts": 5,
+  "sound": true,
+  "dailyGoal": 5,
+  "dailyHistory": {
+    "2026-09-30": [
+      "r-basics-q01"
+    ]
+  },
+  "reviewMetrics": {
+    "r-basics:asignación y objetos": {
+      "challengeId": "r-basics-q01",
+      "failures": 0,
+      "successes": 1,
+      "intervalDays": 1,
+      "dueDay": "2026-10-01",
+      "lastDay": "2026-09-30"
+    }
+  },
+  "reviewActive": false,
+  "dailyReview": null,
+  "sessions": {
+    "r-basics": {
+      "kind": "learn",
+      "source": "lesson",
+      "phase": "practice",
+      "queue": [
+        {
+          "challengeId": "r-basics-q01",
+          "attempts": 0,
+          "failedModes": []
+        },
+        {
+          "challengeId": "r-basics-q02",
+          "attempts": 0,
+          "failedModes": []
+        },
+        {
+          "challengeId": "r-basics-q03",
+          "attempts": 0,
+          "failedModes": []
+        },
+        {
+          "challengeId": "r-basics-q04",
+          "attempts": 0,
+          "failedModes": []
+        },
+        {
+          "challengeId": "r-basics-q05",
+          "attempts": 0,
+          "failedModes": []
+        },
+        {
+          "challengeId": "r-basics-q06",
+          "attempts": 0,
+          "failedModes": []
+        },
+        {
+          "challengeId": "r-basics-q07",
+          "attempts": 0,
+          "failedModes": []
+        },
+        {
+          "challengeId": "r-basics-q08",
+          "attempts": 0,
+          "failedModes": []
+        },
+        {
+          "challengeId": "r-basics-q09",
+          "attempts": 0,
+          "failedModes": []
+        },
+        {
+          "challengeId": "r-basics-q10",
+          "attempts": 0,
+          "failedModes": []
+        },
+        {
+          "challengeId": "r-basics-q11",
+          "attempts": 0,
+          "failedModes": []
+        },
+        {
+          "challengeId": "r-basics-q12",
+          "attempts": 0,
+          "failedModes": []
+        }
+      ],
+      "selected": "tamano_muestra <- 42",
+      "result": {
+        "correct": true
+      },
+      "tokenIds": [],
+      "reviewedCorrect": [],
+      "reviewIds": [],
+      "matchedLefts": [],
+      "showTheory": false,
+      "theoryPageIndex": 0
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "version": 3,
+  "lessonId": "r-basics",
+  "completedCorrect": [
+    "r-basics-q01",
+    "r-basics-q02",
+    "r-basics-q03",
+    "r-basics-q04",
+    "r-basics-q05",
+    "r-basics-q06",
+    "r-basics-q07",
+    "r-basics-q08",
+    "r-basics-q09",
+    "r-basics-q10",
+    "r-basics-q11",
+    "r-basics-q12"
+  ],
+  "completedLessons": [],
+  "xp": 240,
+  "streak": 0,
+  "hearts": 5,
+  "sound": false,
+  "dailyGoal": 5,
+  "dailyHistory": {},
+  "reviewMetrics": {},
+  "reviewActive": false,
+  "dailyReview": null,
+  "sessions": {
+    "r-basics": {
+      "kind": "learn",
+      "source": "lesson",
+      "phase": "match",
+      "queue": [],
+      "selected": "",
+      "result": null,
+      "tokenIds": [],
+      "reviewedCorrect": [],
+      "reviewIds": [],
+      "matchedLefts": [],
+      "showTheory": false,
+      "theoryPageIndex": 0
+    }
+  }
+}

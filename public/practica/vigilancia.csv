@@ -1,0 +1,14 @@
+id,comuna,edad,resultado,fecha_inicio,fecha_consulta
+1,Santiago,34,confirmado,2026-07-01,2026-07-03
+2,Santiago,17,confirmado,2026-07-01,2026-07-02
+3,Santiago,62,confirmado,2026-07-02,2026-07-05
+4,Santiago,,confirmado,2026-07-02,2026-07-04
+5,Maipu,45,confirmado,2026-07-03,2026-07-06
+6,Maipu,28,negativo,2026-07-04,2026-07-05
+7,Maipu,70,confirmado,2026-07-06,2026-07-08
+8,Maipu,19,negativo,2026-07-06,2026-07-08
+9,Puente Alto,-1,confirmado,2026-07-07,2026-07-08
+10,Puente Alto,52,confirmado,2026-07-07,2026-07-09
+11,Puente Alto,,negativo,2026-07-08,2026-07-10
+12,Puente Alto,60,confirmado,2026-07-08,2026-07-12
+3,Santiago,62,confirmado,2026-07-02,2026-07-05
