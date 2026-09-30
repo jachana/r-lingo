@@ -1,7 +1,7 @@
 # R-Lingo improvement goals and milestones
 
 **Reviewed:** 30 September 2026
-**Status:** Implemented locally; release and friends' learning checks remain open
+**Status:** Implemented in draft PR #1; phone and friends' learning checks remain open
 **Audience:** Project owner, friends learning R, and future contributors
 
 R-Lingo has a working foundation: nine Spanish-language units, varied exercises, offline progress, and passing automated checks. The next goal is to make progress trustworthy and turn course completion into repeatable R skills. Prioritize persistence, feedback, and repeat practice before adding more units.
@@ -12,9 +12,9 @@ This is a personal learning app for the owner's friends. They can bring their ow
 
 Progress now uses stable IDs and a versioned session model; it restores retries, feedback, token placements, matching checkpoints, and interrupted units. Completed units can be practiced again without duplicate XP. Answer policies, delayed reveals, unit-specific theory, backup/import confirmation, daily goals, calendar streaks, and scheduled concept review are implemented. The practical assignment and parallel learning-check materials are ready.
 
-Local verification: **733 tests**, lint, production build, and R execution pass. A production browser walkthrough completed a full unit with the server stopped and preserved progress across a desktop app update. **72 responsive checks** passed across four widths. See [implementation evidence and limitations](verification/implementation-checks.md), [content audit](verification/content-audit.md), and [friends' check instructions](PILOT_PROTOCOL.md).
+Local and GitHub CI verification: **733 tests**, lint, production build, and R execution pass. A production browser walkthrough completed a full unit with the server stopped and preserved progress across a desktop app update. **72 responsive checks** passed across four widths. A Tab/Enter walkthrough completed every exercise mode and the final matching board. See [draft PR #1](https://github.com/jachana/r-lingo/pull/1), [implementation evidence and limitations](verification/implementation-checks.md), [content audit](verification/content-audit.md), and [friends' check instructions](PILOT_PROTOCOL.md).
 
-The open gates are a first remote CI run, physical Android/iOS installation/offline/update checks, actual screen-reader use, and the friends' assignment and seven-day scores. Progress backups now have observed file-download and recovery evidence. No learner results have been collected. The overall goal remains open until the remaining checks are recorded.
+The open gates are physical Android/iOS installation/offline/update checks, actual screen-reader use, and the friends' assignment and seven-day scores. Progress backups have observed file-download and recovery evidence; the branch and PR CI runs succeeded. No learner results have been collected. The overall goal remains open until the remaining checks are recorded.
 
 ## Product goal
 
@@ -75,7 +75,7 @@ Sequence work by completion gates. Effort ranges assume one contributor and desc
 
 | Milestone | Result | Priority | Depends on | Estimated effort | Status |
 |---|---|---|---|---|---|
-| M1 | Reliable session and progress foundation | High | — | 4–6 days | Implemented; local checks pass; remote CI pending |
+| M1 | Reliable session and progress foundation | High | — | 4–6 days | Implemented; local and remote CI checks pass |
 | M2 | Consistent validation and teaching feedback | High | M1 stable IDs | 4–6 days | Implemented and locally verified |
 | M3 | Repeat practice without losing progress | High | M1, M2 | 3–5 days | Implemented and locally verified |
 | M4 | Accessible mobile and offline release | High | M1–M3 | 4–6 days | Desktop checks pass; devices/screen reader pending |
@@ -95,7 +95,7 @@ The original estimate was **22–34 working days**, plus the seven-day follow-up
 - [x] Saves with malformed JSON, duplicate/unknown IDs, invalid types, or invalid numeric values produce valid bounded state without a crash.
 - [x] If storage is unavailable, learning continues and the app explains that progress cannot be saved.
 - [x] Completing a unit names that unit, unlocks the next one, and awards its completion XP exactly once.
-- [ ] App-level regression tests cover these transitions; CI runs tests, lint, and build on proposed changes. Tests and workflow are ready; the first remote workflow run remains unobserved.
+- [x] App-level regression tests cover these transitions; CI runs tests, lint, and build on proposed changes. [The PR workflow passed](https://github.com/jachana/r-lingo/actions/runs/36742425365), including R execution.
 
 **Evidence:** migration fixtures, transition tests, and a browser resume/completion walkthrough. Do not rewrite the app solely to split files; extract the session logic to make these behaviors testable together.
 
@@ -178,7 +178,7 @@ Implemented choices: exact answers by default, one explicitly open-ended string-
 
 ## Next concrete checks
 
-1. Run the prepared CI workflow on the repository host and record the result.
+1. Review [draft PR #1](https://github.com/jachana/r-lingo/pull/1) and confirm an HTTPS test URL for the friends' devices. The code is committed on `codex/reliable-learning`; no merge or deployment has been performed.
 2. Repeat the verified desktop backup/recovery journey as part of the phone release checks; include invalid files and cancellation.
 3. Follow the Android/iOS install, offline, update, and accessibility checklist in [PILOT_PROTOCOL.md](PILOT_PROTOCOL.md) using a production HTTPS build.
 4. Give friends the prepared baseline, main assignment, and seven-day materials in [learning-check/](learning-check/README.md). Record observed scores and friction, then adjust the weakest topics before choosing another unit.

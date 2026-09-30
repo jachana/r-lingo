@@ -1,0 +1,823 @@
+{
+  "date": "2026-09-30",
+  "browser": "Codex in-app browser",
+  "scope": "Fixtures imported through UI, then reload. All answer selection, typing, checking, continuing and matching after reload used Tab/Return/typeText against current focus; no locator focus during exercise.",
+  "actualScreenReaderUsed": false,
+  "journey": [
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "tamano_muestra <- 42",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "tamano_muestra == 42",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "42 -> tamano_muestra()",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Reiniciar",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Revisar",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "mode": "choice",
+      "correct": true
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Reiniciar",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Revisar",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "mode": "write",
+      "focus": {
+        "id": "written-answer",
+        "label": "",
+        "tag": "INPUT"
+      },
+      "correct": true
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Reiniciar",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Revisar",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "mode": "gap",
+      "focus": {
+        "id": "written-answer",
+        "label": "",
+        "tag": "INPUT"
+      },
+      "correct": true
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Agregar tamano_muestra a la respuesta",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Agregar 42 a la respuesta",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Agregar <- a la respuesta",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Agregar c( a la respuesta",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Agregar == a la respuesta",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Reiniciar",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Revisar",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "51015",
+        "tag": "SELECT"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Conceptos para repasar",
+        "tag": "SUMMARY"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Práctica independiente en RStudio",
+        "tag": "SUMMARY"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Fuente (requiere internet)",
+        "tag": "A"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Fuente (requiere internet)",
+        "tag": "A"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Fuente (requiere internet)",
+        "tag": "A"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Fuente (requiere internet)",
+        "tag": "A"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Guardar o recuperar una copia de progreso",
+        "tag": "SUMMARY"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Ir a la prácticaR-LingoAprende R con ejemplos de salud pública. 0 seguidas 100% 2340 XPNivel 24108 de 108 listas · 60 XP para el siguiente nivelPrimeros pasos en RObjetos, comentarios y scripts reproduciblesVectores y tipos de datosEntender números, texto y valores lógicosTablas de datosCargar, mirar y entender data framesLimpieza inicialRenombrar, seleccionar y manejar datos faltantesFiltrar casosTrabajar con subconjuntos de interésResumir indicadoresContar, agrupar y calcular porcentajesVisualizar datosCrear gráficos simples con ggplot2Fechas y semanasTrabajar con fechas de vigilanciaExportar resultadosGuardar tablas y compartir evidenciaUnidad 1Leer unidad1 de 12Guarda el valor 42 en un objeto llamado tamano_muestra.En investigación conviene guardar números clave para reutilizarlos sin copiarlos a mano.Arma el comando tocando los bloquestamano_muestra<-tamano_muestra42<-c(==ReiniciarRevisarMeta de hoy0 de 5 ejercicios correctos · 0 días de rachaCada ejercicio cuenta una vez al día, también durante el repaso.Ejercicios por día 51015Practica sin límite. Los errores vuelven a la cola. Un día con una respuesta correcta mantiene la racha diaria según la fecha local.Conceptos para repasarSesiones de hasta cinco conceptos. Tras acertar en días distintos, el repaso pasa de 1 a 3, 7 y 14 días; un error vuelve a 1 día.Mapa rápido de RPráctica independiente en RStudioUsa datos ficticios para crear una tabla y un gráfico. Guarda tu intento antes de abrir la solución.Guía y rúbricaDatos de vigilancia (CSV)Poblaciones ficticias (CSV)Script inicialSolución: ver después de intentarSolución comentadaread.csv()Carga un CSV de vigilancia, encuesta o laboratorio como tabla.Fuente (requiere internet)summary()Resume rangos, frecuencias y posibles valores raros.Fuente (requiere internet)filter()Deja solo filas que cumplen criterios, como confirmados o una comuna.Fuente (requiere internet)ggplot()Inicia gráficos para tendencias, grupos o comparación territorial.Fuente (requiere internet)Guardar o recuperar una copia de progreso Sonidos de respuestaExportar progresoRecuperar desde un archivo de progresoValidar copia",
+        "tag": "BODY"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Ir a la práctica",
+        "tag": "A"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Primeros pasos en R",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Vectores y tipos de datos",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Tablas de datos",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Limpieza inicial",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Filtrar casos",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Resumir indicadores",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Visualizar datos",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Fechas y semanas",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Exportar resultados",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Leer unidad",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Quitar tamano_muestra de la respuesta",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Quitar <- de la respuesta",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Agregar 42 a la respuesta",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Agregar c( a la respuesta",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Agregar == a la respuesta",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Reiniciar",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Revisar",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "mode": "tokens",
+      "correct": true
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "script",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "x1",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "casos / poblacion * 100000",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "#",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "calcula incidencia por 100.000",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "receta reproducible del análisis",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Reiniciar",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "51015",
+        "tag": "SELECT"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Conceptos para repasar",
+        "tag": "SUMMARY"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Práctica independiente en RStudio",
+        "tag": "SUMMARY"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Fuente (requiere internet)",
+        "tag": "A"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Fuente (requiere internet)",
+        "tag": "A"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Fuente (requiere internet)",
+        "tag": "A"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Fuente (requiere internet)",
+        "tag": "A"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Guardar o recuperar una copia de progreso",
+        "tag": "SUMMARY"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Ir a la prácticaR-LingoAprende R con ejemplos de salud pública. 0 seguidas 11% 240 XPNivel 312 de 108 listas · 60 XP para el siguiente nivelPrimeros pasos en RObjetos, comentarios y scripts reproduciblesVectores y tipos de datosCompleta la unidad anterior para desbloquearTablas de datosCompleta la unidad anterior para desbloquearLimpieza inicialCompleta la unidad anterior para desbloquearFiltrar casosCompleta la unidad anterior para desbloquearResumir indicadoresCompleta la unidad anterior para desbloquearVisualizar datosCompleta la unidad anterior para desbloquearFechas y semanasCompleta la unidad anterior para desbloquearExportar resultadosCompleta la unidad anterior para desbloquearUnidad 1Leer unidadRepaso: Primeros pasos en RÚltima prueba antes de cerrar la unidad.Une cada comando con lo que haceCorrecto: script — receta reproducible del análisis. 1 de 4 parejas listas.scriptx1casos / poblacion * 100000#calcula incidencia por 100.000receta reproducible del análisisnombre de objeto poco claroinicia un comentarioReiniciarMeta de hoy0 de 5 ejercicios correctos · 0 días de rachaCada ejercicio cuenta una vez al día, también durante el repaso.Ejercicios por día 51015Practica sin límite. Los errores vuelven a la cola. Un día con una respuesta correcta mantiene la racha diaria según la fecha local.Conceptos para repasarSesiones de hasta cinco conceptos. Tras acertar en días distintos, el repaso pasa de 1 a 3, 7 y 14 días; un error vuelve a 1 día.Mapa rápido de RPráctica independiente en RStudioUsa datos ficticios para crear una tabla y un gráfico. Guarda tu intento antes de abrir la solución.Guía y rúbricaDatos de vigilancia (CSV)Poblaciones ficticias (CSV)Script inicialSolución: ver después de intentarSolución comentadaread.csv()Carga un CSV de vigilancia, encuesta o laboratorio como tabla.Fuente (requiere internet)summary()Resume rangos, frecuencias y posibles valores raros.Fuente (requiere internet)filter()Deja solo filas que cumplen criterios, como confirmados o una comuna.Fuente (requiere internet)ggplot()Inicia gráficos para tendencias, grupos o comparación territorial.Fuente (requiere internet)Guardar o recuperar una copia de progreso Sonidos de respuestaExportar progresoRecuperar desde un archivo de progresoValidar copia",
+        "tag": "BODY"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Ir a la práctica",
+        "tag": "A"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Primeros pasos en R",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Leer unidad",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "x1",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "casos / poblacion * 100000",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "#",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "calcula incidencia por 100.000",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "nombre de objeto poco claro",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Reiniciar",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "51015",
+        "tag": "SELECT"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Conceptos para repasar",
+        "tag": "SUMMARY"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Práctica independiente en RStudio",
+        "tag": "SUMMARY"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Fuente (requiere internet)",
+        "tag": "A"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Fuente (requiere internet)",
+        "tag": "A"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Fuente (requiere internet)",
+        "tag": "A"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Fuente (requiere internet)",
+        "tag": "A"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Guardar o recuperar una copia de progreso",
+        "tag": "SUMMARY"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Ir a la prácticaR-LingoAprende R con ejemplos de salud pública. 0 seguidas 11% 240 XPNivel 312 de 108 listas · 60 XP para el siguiente nivelPrimeros pasos en RObjetos, comentarios y scripts reproduciblesVectores y tipos de datosCompleta la unidad anterior para desbloquearTablas de datosCompleta la unidad anterior para desbloquearLimpieza inicialCompleta la unidad anterior para desbloquearFiltrar casosCompleta la unidad anterior para desbloquearResumir indicadoresCompleta la unidad anterior para desbloquearVisualizar datosCompleta la unidad anterior para desbloquearFechas y semanasCompleta la unidad anterior para desbloquearExportar resultadosCompleta la unidad anterior para desbloquearUnidad 1Leer unidadRepaso: Primeros pasos en RÚltima prueba antes de cerrar la unidad.Une cada comando con lo que haceCorrecto: x1 — nombre de objeto poco claro. 2 de 4 parejas listas.scriptx1casos / poblacion * 100000#calcula incidencia por 100.000receta reproducible del análisisnombre de objeto poco claroinicia un comentarioReiniciarMeta de hoy0 de 5 ejercicios correctos · 0 días de rachaCada ejercicio cuenta una vez al día, también durante el repaso.Ejercicios por día 51015Practica sin límite. Los errores vuelven a la cola. Un día con una respuesta correcta mantiene la racha diaria según la fecha local.Conceptos para repasarSesiones de hasta cinco conceptos. Tras acertar en días distintos, el repaso pasa de 1 a 3, 7 y 14 días; un error vuelve a 1 día.Mapa rápido de RPráctica independiente en RStudioUsa datos ficticios para crear una tabla y un gráfico. Guarda tu intento antes de abrir la solución.Guía y rúbricaDatos de vigilancia (CSV)Poblaciones ficticias (CSV)Script inicialSolución: ver después de intentarSolución comentadaread.csv()Carga un CSV de vigilancia, encuesta o laboratorio como tabla.Fuente (requiere internet)summary()Resume rangos, frecuencias y posibles valores raros.Fuente (requiere internet)filter()Deja solo filas que cumplen criterios, como confirmados o una comuna.Fuente (requiere internet)ggplot()Inicia gráficos para tendencias, grupos o comparación territorial.Fuente (requiere internet)Guardar o recuperar una copia de progreso Sonidos de respuestaExportar progresoRecuperar desde un archivo de progresoValidar copia",
+        "tag": "BODY"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Ir a la práctica",
+        "tag": "A"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Primeros pasos en R",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Leer unidad",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "casos / poblacion * 100000",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "#",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "calcula incidencia por 100.000",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Reiniciar",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "51015",
+        "tag": "SELECT"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Conceptos para repasar",
+        "tag": "SUMMARY"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Práctica independiente en RStudio",
+        "tag": "SUMMARY"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Fuente (requiere internet)",
+        "tag": "A"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Fuente (requiere internet)",
+        "tag": "A"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Fuente (requiere internet)",
+        "tag": "A"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Fuente (requiere internet)",
+        "tag": "A"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Guardar o recuperar una copia de progreso",
+        "tag": "SUMMARY"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Ir a la prácticaR-LingoAprende R con ejemplos de salud pública. 0 seguidas 11% 240 XPNivel 312 de 108 listas · 60 XP para el siguiente nivelPrimeros pasos en RObjetos, comentarios y scripts reproduciblesVectores y tipos de datosCompleta la unidad anterior para desbloquearTablas de datosCompleta la unidad anterior para desbloquearLimpieza inicialCompleta la unidad anterior para desbloquearFiltrar casosCompleta la unidad anterior para desbloquearResumir indicadoresCompleta la unidad anterior para desbloquearVisualizar datosCompleta la unidad anterior para desbloquearFechas y semanasCompleta la unidad anterior para desbloquearExportar resultadosCompleta la unidad anterior para desbloquearUnidad 1Leer unidadRepaso: Primeros pasos en RÚltima prueba antes de cerrar la unidad.Une cada comando con lo que haceCorrecto: casos / poblacion * 100000 — calcula incidencia por 100.000. 3 de 4 parejas listas.scriptx1casos / poblacion * 100000#calcula incidencia por 100.000receta reproducible del análisisnombre de objeto poco claroinicia un comentarioReiniciarMeta de hoy0 de 5 ejercicios correctos · 0 días de rachaCada ejercicio cuenta una vez al día, también durante el repaso.Ejercicios por día 51015Practica sin límite. Los errores vuelven a la cola. Un día con una respuesta correcta mantiene la racha diaria según la fecha local.Conceptos para repasarSesiones de hasta cinco conceptos. Tras acertar en días distintos, el repaso pasa de 1 a 3, 7 y 14 días; un error vuelve a 1 día.Mapa rápido de RPráctica independiente en RStudioUsa datos ficticios para crear una tabla y un gráfico. Guarda tu intento antes de abrir la solución.Guía y rúbricaDatos de vigilancia (CSV)Poblaciones ficticias (CSV)Script inicialSolución: ver después de intentarSolución comentadaread.csv()Carga un CSV de vigilancia, encuesta o laboratorio como tabla.Fuente (requiere internet)summary()Resume rangos, frecuencias y posibles valores raros.Fuente (requiere internet)filter()Deja solo filas que cumplen criterios, como confirmados o una comuna.Fuente (requiere internet)ggplot()Inicia gráficos para tendencias, grupos o comparación territorial.Fuente (requiere internet)Guardar o recuperar una copia de progreso Sonidos de respuestaExportar progresoRecuperar desde un archivo de progresoValidar copia",
+        "tag": "BODY"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Ir a la práctica",
+        "tag": "A"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Primeros pasos en R",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "Leer unidad",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "#",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "key": "Tab",
+      "focus": {
+        "id": "",
+        "label": "inicia un comentario",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "mode": "match",
+      "completed": true,
+      "xp": 260
+    }
+  ]
+}
